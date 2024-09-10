@@ -1,3 +1,5 @@
-import { config } from "./config/config";
+import { config } from './config/config';
 
-export { config };
+import authService from './appwrite/authService';
+
+export { config, authService };
