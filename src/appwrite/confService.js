@@ -28,10 +28,8 @@ class StorageService {
       console.log(`set Profile Error::ERROR::${error.message}`);
     }
   }
-
   // user service
   // 2. get USER PROFILE
-
   async getUserProfile(id) {
     try {
       return this.database.getDocument(
@@ -80,8 +78,67 @@ class StorageService {
       );
     } catch (error) {
       console.log(
-        `failed to delete user Profile Error::ERROR::${error.message}`
+        `failed to update user Profile Error::ERROR::${error.message}`
       );
+    }
+  }
+
+  //----------------BLOG SERIVCES ------------------------------//
+
+  // 1. create BLOG
+  async createBlog({ data }) {
+    try {
+      return await this.database.createDocument(
+        config.appwrite_db,
+        config.appwrite_blog,
+        ID.unique(),
+        {
+          ...data,
+        }
+      );
+    } catch (error) {
+      console.log(`create BLOG ERROR::ERROR::${error.message}`);
+    }
+  }
+  // 2. get BLOG
+  async getBlog(id) {
+    try {
+      return this.database.getDocument(
+        config.appwrite_db,
+        config.appwrite_blog,
+        id
+      );
+    } catch (error) {
+      console.log(`get BLOG ERROR::ERROR::${error.message}`);
+    }
+  }
+
+  //3. update BLOG
+  async updateBlog(id, { data }) {
+    try {
+      return this.database.updateDocument(
+        config.appwrite_db,
+        config.appwrite_blog,
+        id,
+        {
+          ...data,
+        }
+      );
+    } catch (error) {
+      console.log(`create POST ERROR::ERROR::${error.message}`);
+    }
+  }
+
+  // 4. delete POST
+  async deleteBlog(id) {
+    try {
+      return this.database.deleteDocument(
+        config.appwrite_db,
+        config.appwrite_blog,
+        id
+      );
+    } catch (error) {
+      console.log(`delete BLOG ERROR::ERROR::${error.message}`);
     }
   }
 }
