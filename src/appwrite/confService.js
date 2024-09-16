@@ -1,4 +1,4 @@
-import { Client, Databases, ID, Storage } from 'appwrite';
+import { Client, Databases, ID, Query, Storage } from 'appwrite';
 import { config } from '../index';
 class StorageService {
   client = new Client();
@@ -100,7 +100,7 @@ class StorageService {
       console.log(`create BLOG ERROR::ERROR::${error.message}`);
     }
   }
-  // 2. get BLOG
+  // 2. get BLOG // universal call
   async getBlog(id) {
     try {
       return this.database.getDocument(
@@ -141,7 +141,97 @@ class StorageService {
       console.log(`delete BLOG ERROR::ERROR::${error.message}`);
     }
   }
+
+  // get all blog post
+  async getBlogList() {
+    try {
+      return await this.database.listDocuments(
+        config.appwrite_db,
+        config.appwrite_blog
+      );
+    } catch (error) {
+      console.log(`fetch  BLOG LIST ERROR::ERROR::${error.message}`);
+    }
+  }
+
+  // get post category wise
+  async getBlogListCategaryWise(category) {
+    try {
+      return await this.database.listDocuments(
+        config.appwrite_db,
+        config.appwrite_blog,
+        [Query.equal('category', [`${category}`])]
+      );
+    } catch (error) {
+      console.log(`failed to fetch data::blog-category::${error.message}`);
+    }
+  }
+
+  // bucket
+  //1. create file
+  async createFile(filePath) {
+    try {
+      if (!filePath) return false;
+      return await this.bucket.createFile(config.appwrite_bucket, filePath);
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  async deleteFile(fileId) {
+    try {
+      return await this.bucket.deleteFile(config.appwrite_bucket, fileId);
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  async getFile(fileId) {
+    try {
+      return await this.bucket.getFile(config.appwrite_bucket, fileId);
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  async updateFile({ fileId, filePath }) {
+    try {
+      if (!fileId || !filePath) return false;
+      const res = await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
+      if (!res) {
+        return false;
+      }
+      const uploadRes = await this.bucket.createFile(
+        config.appwrite_bucket,
+        fileId,
+        filePath
+      );
+      if (!uploadRes) {
+        return false;
+      }
+
+      return uploadRes;
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
+  }
+
+  async getFilePreview(fileId) {
+    try {
+      return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
+    } catch (error) {
+      console.log(`${error.message}`);
+    }
+  }
 }
 
+// advance
+// comments , like,
+
+// dashboard, analytics
+// admin panel
+
+// bucket
+//1. create file
 const storageService = new StorageService();
 export default storageService;
