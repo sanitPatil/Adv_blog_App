@@ -166,63 +166,6 @@ class StorageService {
       console.log(`failed to fetch data::blog-category::${error.message}`);
     }
   }
-
-  // bucket
-  //1. create file
-  async createFile(filePath) {
-    try {
-      if (!filePath) return false;
-      return await this.bucket.createFile(config.appwrite_bucket, filePath);
-    } catch (error) {
-      console.log(`${error.message}`);
-    }
-  }
-
-  async deleteFile(fileId) {
-    try {
-      return await this.bucket.deleteFile(config.appwrite_bucket, fileId);
-    } catch (error) {
-      console.log(`${error.message}`);
-    }
-  }
-
-  async getFile(fileId) {
-    try {
-      return await this.bucket.getFile(config.appwrite_bucket, fileId);
-    } catch (error) {
-      console.log(`${error.message}`);
-    }
-  }
-
-  async updateFile({ fileId, filePath }) {
-    try {
-      if (!fileId || !filePath) return false;
-      const res = await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
-      if (!res) {
-        return false;
-      }
-      const uploadRes = await this.bucket.createFile(
-        config.appwrite_bucket,
-        fileId,
-        filePath
-      );
-      if (!uploadRes) {
-        return false;
-      }
-
-      return uploadRes;
-    } catch (error) {
-      console.log(`${error.message}`);
-    }
-  }
-
-  async getFilePreview(fileId) {
-    try {
-      return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
-    } catch (error) {
-      console.log(`${error.message}`);
-    }
-  }
 }
 
 // advance
