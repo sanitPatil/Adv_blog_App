@@ -167,6 +167,17 @@ class StorageService {
     }
   }
 
+  async checkUserName(username) {
+    try {
+      return this.database.listDocuments(
+        config.appwrite_db,
+        config.appwrite_user,
+        [Query.equal('userName', username)]
+      );
+    } catch (error) {
+      console.log(`failed::ERROR${error.message}`);
+    }
+  }
   // bucket
   //1. create file
   async createFile(filePath) {
@@ -223,6 +234,8 @@ class StorageService {
       console.log(`failed file preview::ERROR::$${error.message}`);
     }
   }
+
+  // checking username exists or not
 }
 
 // advance
