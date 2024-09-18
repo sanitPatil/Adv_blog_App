@@ -12,11 +12,12 @@ class AuthService {
   }
 
   //1. register
-  async register({ email, password, userName }) {
+  async register({ name, email, password }) {
     try {
-      return await this.account.create(ID.unique(), email, password, userName);
+      return await this.account.create(ID.unique(), email, password, name);
     } catch (error) {
-      console.log(`Registration Error::Register Func::${error.message}`);
+      console.log(`Registration Error::${error.message}`);
+      return false;
     }
   }
 
@@ -25,7 +26,8 @@ class AuthService {
     try {
       return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
-      console.log(`Login Error::Login Func::${error.message}`);
+      console.log(`Login Error::${error.message}`);
+      return false;
     }
   }
 
@@ -35,6 +37,7 @@ class AuthService {
       return await this.account.deleteSessions();
     } catch (error) {
       console.log(`LogOut Error::LogOut Func::${error.message}`);
+      return false;
     }
   }
 
@@ -46,6 +49,7 @@ class AuthService {
       console.log(
         `getCurrentLogin Error::getCurrentLogin Func::${error.message}`
       );
+      return false;
     }
   }
 
@@ -56,6 +60,7 @@ class AuthService {
       return await this.account.updateEmail(email, password);
     } catch (error) {
       console.log(`Update-Email Error::Update-Email Func::${error.message}`);
+      return false;
     }
   }
   // 6. update Name
@@ -66,6 +71,7 @@ class AuthService {
       console.log(
         `Update-User-Name Error::Update-User-Name Func::${error.message}`
       );
+      return false;
     }
   }
 
@@ -77,6 +83,7 @@ class AuthService {
       console.log(
         `Update-Password Error::Update-Password Func::${error.message}`
       );
+      return false;
     }
   }
 
@@ -88,6 +95,7 @@ class AuthService {
       console.log(
         `Delete Identity Error::Delete Identity Func::${error.message}`
       );
+      return false;
     }
   }
 }

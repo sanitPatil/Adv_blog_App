@@ -80,6 +80,7 @@ class StorageService {
       console.log(
         `failed to update user Profile Error::ERROR::${error.message}`
       );
+      return false;
     }
   }
 
@@ -98,6 +99,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`create BLOG ERROR::ERROR::${error.message}`);
+      return false;
     }
   }
   // 2. get BLOG // universal call
@@ -110,6 +112,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`get BLOG ERROR::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -126,6 +129,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`create POST ERROR::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -139,6 +143,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`delete BLOG ERROR::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -151,6 +156,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`failed to get blog list::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -164,6 +170,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`failed to fetch data::blog-category::${error.message}`);
+      return false;
     }
   }
 
@@ -176,6 +183,7 @@ class StorageService {
       );
     } catch (error) {
       console.log(`failed::ERROR${error.message}`);
+      return false;
     }
   }
   // bucket
@@ -186,6 +194,7 @@ class StorageService {
       return await this.bucket.createFile(config.appwrite_bucket, filePath);
     } catch (error) {
       console.log(`failed to create bucket file::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -194,6 +203,7 @@ class StorageService {
       return await this.bucket.deleteFile(config.appwrite_bucket, fileId);
     } catch (error) {
       console.log(`failed to delete bucket file::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -202,16 +212,14 @@ class StorageService {
       return await this.bucket.getFile(config.appwrite_bucket, fileId);
     } catch (error) {
       console.log(`failed to get bucket file::ERROR::${error.message}`);
+      return false;
     }
   }
 
   async updateFile({ fileId, filePath }) {
     try {
       if (!fileId || !filePath) return false;
-      const res = await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
-      if (!res) {
-        return false;
-      }
+
       const uploadRes = await this.bucket.createFile(
         config.appwrite_bucket,
         fileId,
@@ -220,10 +228,12 @@ class StorageService {
       if (!uploadRes) {
         return false;
       }
+      await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
 
       return uploadRes;
     } catch (error) {
       console.log(`failed to update bucket file::ERROR::${error.message}`);
+      return false;
     }
   }
 
@@ -232,6 +242,7 @@ class StorageService {
       return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
     } catch (error) {
       console.log(`failed file preview::ERROR::$${error.message}`);
+      return false;
     }
   }
 

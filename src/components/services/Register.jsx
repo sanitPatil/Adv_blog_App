@@ -3,6 +3,8 @@ import { authService, Container, storageService } from '../../index';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import debounce from 'debounce';
+import Input from '../Elements/Input';
+import { Loader } from 'lucide-react';
 
 // const checkUserName = debounce(async (username) => {
 //   try {
@@ -18,11 +20,12 @@ function Register() {
     handleSubmit,
     register,
     reset,
-    watch,
-    clearErrors,
-    formState: { errors },
-  } = useForm();
+    formState: { errors, isValid },
+  } = useForm({
+    mode: `onChange`,
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   //const [IsTaken, setIsTaken] = useState(false);
 
   // const handleUserName = useCallback((username) => {
@@ -45,23 +48,21 @@ function Register() {
       return;
     }
 
+    // console.log(data);
+    setLoading(true);
     const res = await authService.register(data);
-    if (!res) {
-      setError(`${res}`);
-      return;
+    setLoading(false);
+    if (res) {
     }
-    console.log(res);
-
-    reset();
-    setError('');
   };
+  //console.log(isValid);
 
   return (
     <Container>
-      <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[600px] border">
-        <div className="flex items-center justify-center py-12 border">
-          <div className="mx-auto grid w-[450px] gap-6 border p-4">
-            <div className="grid gap-2 text-center">
+      <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[600px] ">
+        <div className="flex items-center justify-center py-12">
+          <div className="mx-auto grid w-[450px] gap-6 border-b-2 p-4 shadow-lg rounded-md ">
+            <div className="grid gap-2 text-center ">
               <h1 className="text-3xl font-bold">Login</h1>
               <p className="text-balance text-muted-foreground">
                 Enter Following Details To Register.
@@ -70,35 +71,35 @@ function Register() {
             <form onSubmit={handleSubmit(createUser)}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <label htmlFor="username">User Name</label>
-                  <input
-                    {...register('username', {
+                  {/* <label htmlFor="name">Name</label> */}
+                  <Input
+                    {...register('name', {
                       required: true,
-                      pattern: {
-                        value: /^[^\s]+$/,
-                        message: 'space are not allowed!!!',
-                      },
+                      maxLength: 20,
+                      minLength: 5,
                     })}
                     className={`border p-2 rounded-md ${
-                      errors?.username ? 'border-red-800' : ''
+                      errors?.name ? 'border-red-800' : ''
                     }`}
-                    id="username"
+                    label="Name"
+                    id="name"
                     type="text"
-                    placeholder="blogUser123"
+                    placeholder="John Doe"
                   />
                   {/* {IsTaken && (
                     <p className="text-red-800 italic">
-                      userName Already taken...try new one
+                     Already taken...try new one
                     </p>
                   )} */}
                   {errors && (
-                    <p className="text-red-800">{errors?.username?.message}</p>
+                    <p className="text-red-800">{errors?.name?.message}</p>
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <label htmlFor="email">Email</label>
+                  {/* <label htmlFor="email">Email</label> */}
 
-                  <input
+                  <Input
+                    label="Email"
                     {...register('email', {
                       required: true,
                       pattern: {
@@ -118,8 +119,9 @@ function Register() {
                   )}
                 </div>
                 <div className="grid gap-2">
-                  <label htmlFor="password">password</label>
-                  <input
+                  {/* <label htmlFor="password">password</label> */}
+                  <Input
+                    label="Password"
                     {...register('password', {
                       required: true,
                       pattern: {
@@ -142,12 +144,14 @@ function Register() {
                 <div className="w-full text-center ">
                   <button
                     type="submit"
-                    className={`border p-2 w-[20%] pointer rounded-lg
-                        hover:bg-gray-700
-                      `}
-                    disabled={errors === null ? true : false}
+                    className={` font-semibold p-2 rounded-lg border-2 border-black w-[25%] }`}
+                    disabled={loading}
                   >
-                    Register
+                    {loading ? (
+                      <Loader className=" w-full animate-spin items-center" />
+                    ) : (
+                      'Register'
+                    )}
                   </button>
                 </div>
                 {/* <button className="w-full">Login with Google</button> */}
