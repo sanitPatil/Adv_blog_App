@@ -4,7 +4,10 @@ import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
 import { Loader } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLoginStore } from '../../zustStore/Store';
 function Login() {
+  const { loginState } = useLoginStore((state) => state);
+
   const [error, setError] = React.useState('');
   const [loading, setLoaidng] = useState(false);
   const navigate = useNavigate();
@@ -34,14 +37,17 @@ function Login() {
     }
     const res = await authService.login(data);
     if (!res) {
+      console.log(res);
+
       setError('failed to login');
       setLoaidng(false);
       return;
     }
     setLoaidng(false);
-    console.log(res);
+    loginState(res);
     navigate('/');
   };
+
   return (
     <section>
       <Container>
