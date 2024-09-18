@@ -1,11 +1,7 @@
 import React from 'react';
 import { Register } from './index';
 function App() {
-  return (
-    <div>
-      <Register />
-    </div>
-  );
+  return <div>hello world</div>;
 }
 
 export default App;
