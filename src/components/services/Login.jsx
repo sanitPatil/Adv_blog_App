@@ -12,10 +12,6 @@ function Login() {
   const [loading, setLoaidng] = useState(false);
   const navigate = useNavigate();
   const linkEmail = useLocation().state;
-  let email_Default = '';
-  if (linkEmail?.email) {
-    email_Default = linkEmail?.email;
-  }
 
   const {
     register,
@@ -23,7 +19,7 @@ function Login() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: email_Default,
+      email: linkEmail?.email || '',
     },
   });
 
