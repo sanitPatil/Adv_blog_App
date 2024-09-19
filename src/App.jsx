@@ -1,6 +1,7 @@
 import React from 'react';
-import { authService, Navbar } from './index';
+import { authService, Footer, Navbar } from './index';
 import { useLoginStore } from './zustStore/Store';
+import { Outlet } from 'react-router-dom';
 function App() {
   const { logOutState } = useLoginStore((state) => state);
   const logout = async () => {
@@ -11,8 +12,8 @@ function App() {
   return (
     <div>
       <Navbar />
-      hello world
-      <button onClick={logout}>logout</button>
+      <Outlet />
+      <Footer />
     </div>
   );
 }

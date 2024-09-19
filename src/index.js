@@ -11,7 +11,9 @@ import Login from './components/services/Login';
 import UserProfile from './components/services/UserProfile';
 import Navbar from './components/services/Navbar';
 import BlogAppLogo from './components/services/BlogAppLogo';
+import Footer from './components/services/Footer';
 export {
+  Footer,
   BlogAppLogo,
   Navbar,
   config,
