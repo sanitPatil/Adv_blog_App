@@ -12,7 +12,10 @@ import UserProfile from './components/services/UserProfile';
 import Navbar from './components/services/Navbar';
 import BlogAppLogo from './components/services/BlogAppLogo';
 import Footer from './components/services/Footer';
+
+import AuthLayout from './components/services/AuthLayout';
 export {
+  AuthLayout,
   Footer,
   BlogAppLogo,
   Navbar,

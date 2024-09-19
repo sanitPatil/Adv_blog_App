@@ -3,22 +3,41 @@ import { BlogAppLogo } from '../../index';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLoginStore } from '../../zustStore/Store';
+import { authService } from '../../index';
 // all post , stats , category wise search, search, home, add-post
 
 function Navbar() {
-  const { loginStatus } = useLoginStore((state) => state);
+  const { loginStatus, logOutState } = useLoginStore((state) => state);
+  const logout = async () => {
+    await authService.LogOut();
+    logOutState();
+    console.log('hello');
+  };
   const navItem = [
     {
       navName: 'Home',
       path: '/',
+      active: true,
     },
     {
       navName: 'All-Post',
       path: '/',
+      active: loginStatus,
     },
     {
       navName: 'Add-Post',
       path: '/',
+      active: loginStatus,
+    },
+    {
+      navName: 'Login',
+      path: '/login',
+      active: !loginStatus,
+    },
+    {
+      navName: 'Register',
+      path: '/register',
+      active: !loginStatus,
     },
   ];
 
@@ -33,11 +52,14 @@ function Navbar() {
         <nav className="ml-20 w-[30%]">
           <ul className="flex justify-between">
             {navItem &&
-              navItem.map((item) => (
-                <Link to={item.path} key={item.navName}>
-                  <li>{item.navName}</li>
-                </Link>
-              ))}
+              navItem.map(
+                (item) =>
+                  item.active && (
+                    <Link to={item.path} key={item.navName}>
+                      <li>{item.navName}</li>
+                    </Link>
+                  )
+              )}
           </ul>
         </nav>
         <nav className="w-full flex justify-center">
@@ -110,7 +132,10 @@ function Navbar() {
                 )}
                 {loginStatus && (
                   <li>
-                    <button className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full">
+                    <button
+                      onClick={logout}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                    >
                       Logout
                     </button>
                   </li>

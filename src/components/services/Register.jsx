@@ -43,10 +43,10 @@ function Register() {
 
   return (
     <Container>
-      <div className="flex items-center justify-center py-12 w-full border">
+      <div className="relative max-h-screen top-2 flex z-10 items-center justify-center py-4 w-full">
         <div className="mx-auto grid w-[450px] gap-6 border-b-2 p-4 shadow-lg rounded-md ">
           <div className="grid gap-2 text-center ">
-            <h1 className="text-3xl font-bold">Login</h1>
+            <h1 className="text-3xl font-bold">Register</h1>
             <p className="text-balance text-muted-foreground">
               Enter Following Details To Register.
             </p>

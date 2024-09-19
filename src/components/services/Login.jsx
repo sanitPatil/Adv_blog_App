@@ -47,7 +47,7 @@ function Login() {
   return (
     <section>
       <Container>
-        <div className="flex items-center justify-center py-12 w-full border">
+        <div className="mx-auto items-center justify-center py-12 w-full pb-2">
           <div className="mx-auto grid w-[450px] gap-6 border-b-2 p-4 shadow-lg rounded-md ">
             <div className="grid gap-2 text-center ">
               <h1 className="text-3xl font-bold">Login</h1>
