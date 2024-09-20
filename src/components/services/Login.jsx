@@ -6,7 +6,7 @@ import { Loader } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLoginStore } from '../../zustStore/Store';
 function Login() {
-  const { loginState } = useLoginStore((state) => state);
+  const { loginState, logOutState } = useLoginStore((state) => state);
 
   const [error, setError] = React.useState('');
   const [loading, setLoaidng] = useState(false);
@@ -31,16 +31,24 @@ function Login() {
       setLoaidng(false);
       return;
     }
-    const res = await authService.login(data);
-    if (!res) {
-      console.log(res);
+    const session = await authService.login(data);
+    if (!session) {
+      console.log(session);
 
-      setError('failed to login');
+      setError(session.error);
       setLoaidng(false);
       return;
     }
+    authService
+      .getCurrentLogin()
+      .then((userData) => {
+        loginState(userData);
+      })
+      .catch((error) => {
+        setError(error.message);
+        logOutState();
+      });
     setLoaidng(false);
-    loginState(res);
     navigate('/');
   };
 
