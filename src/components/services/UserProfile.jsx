@@ -88,9 +88,9 @@ function UserProfile() {
       </div>
       <section>
         <form onSubmit={handleSubmit(userProfileData)}>
-          <div className="grid grid-rows-4">
-            <div className="row-span-2 w-full h-[40vh]">
-              <h1 className="text-center text-2xl font-semibold mt-4">
+          <div className="border">
+            <div className=" w-full h-full">
+              <h1 className="text-center text-3xl font-semibold mt-4">
                 User Profile Details
               </h1>
               <div className="grid grid-cols-2 gap-6 mt-2">
@@ -172,18 +172,66 @@ function UserProfile() {
                 </div>
               </div>
             </div>
-            <div>personal details gamial password name</div>
-            <div>delete account</div>
           </div>
         </form>
+        <main id="#security">
+          <h1 className="text-3xl font-semibold mt-4 text-center pt-2">
+            Security{' '}
+          </h1>
+          <div className="grid grid-cols-2 gap-4">
+            <form>
+              <div className="w-full">
+                <div className=" m-2 p-2 w-full text-center">
+                  <Input
+                    type="email"
+                    label="Email"
+                    className="p-2 rounded-lg mt-2"
+                  ></Input>
+                  <button className="text-xl p-2 w-24 rounded-lg font-bold bg-black text-white">
+                    Edit
+                  </button>
+                </div>
+              </div>
+            </form>
+            {/* {new form} */}
+            <form>
+              <div className=" mt-2 p-2">
+                <div className="grid grid-cols-2 ">
+                  <div>
+                    <Input
+                      type="password"
+                      label="old-password"
+                      className="p-2 rounded-lg mt-2"
+                    ></Input>
+                  </div>
+                  <div>
+                    <Input
+                      type="password"
+                      label="password"
+                      className="p-2 rounded-lg mt-2"
+                    ></Input>
+                  </div>
+                </div>
+                <div className="text-center m-2">
+                  <button className="text-xl p-1 w-24 rounded-lg font-bold bg-black text-white">
+                    Edit
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </main>
+        <main>
+          <div className="border">
+            <h1 className=" text-center text-3xl text-red-700 font-semibold ">
+              Delete Your Account
+            </h1>
+            <div></div>
+          </div>
+        </main>
       </section>
     </main>
   );
 }
 
 export default UserProfile;
-
-// <div className="w-1/2 p-2 m-4 text-xl ">
-//
-//                 <div></div>
-//               </div>
