@@ -13,19 +13,20 @@ class StorageService {
 
   // user service
   // 1. set USER PROFILE
-  async setUserProfile(userId, data) {
+  async setUserProfile(data) {
+    console.log(data);
+    if (!data) return data;
     try {
-      return await this.database.createDocument(
+      const res = await this.database.createDocument(
         config.appwrite_db,
         config.appwrite_user,
         ID.unique(),
-        {
-          userId: userId,
-          ...data,
-        }
+        data
       );
+      console.log('user-profile-setup successfull.');
+      return res;
     } catch (error) {
-      console.log(`set Profile Error::ERROR::${error.message}`);
+      console.log('Appwrite serive :: user-profile-setup :: error', error);
     }
   }
   // user service
@@ -38,7 +39,7 @@ class StorageService {
         id
       );
     } catch (error) {
-      console.log(`get Profile Error::ERROR::${error.message}`);
+      console.log('Appwrite serive :: get-user-profile :: error', error);
     }
   }
 
@@ -53,9 +54,7 @@ class StorageService {
         id
       );
     } catch (error) {
-      console.log(
-        `failed to delete user Profile Error::ERROR::${error.message}`
-      );
+      console.log('Appwrite serive :: delete-user-profile :: error', error);
     }
   }
 
@@ -77,9 +76,7 @@ class StorageService {
         }
       );
     } catch (error) {
-      console.log(
-        `failed to update user Profile Error::ERROR::${error.message}`
-      );
+      console.log('Appwrite serive :: update-user-profile :: error', error);
       return false;
     }
   }
@@ -98,7 +95,7 @@ class StorageService {
         }
       );
     } catch (error) {
-      console.log(`create BLOG ERROR::ERROR::${error.message}`);
+      console.log('Appwrite serive :: create-blog :: error', error);
       return false;
     }
   }
@@ -111,7 +108,7 @@ class StorageService {
         id
       );
     } catch (error) {
-      console.log(`get BLOG ERROR::ERROR::${error.message}`);
+      console.log('Appwrite serive :: get-blog:: error', error);
       return false;
     }
   }
@@ -128,7 +125,7 @@ class StorageService {
         }
       );
     } catch (error) {
-      console.log(`create POST ERROR::ERROR::${error.message}`);
+      console.log('Appwrite serive :: update-blog :: error', error);
       return false;
     }
   }
@@ -142,7 +139,7 @@ class StorageService {
         id
       );
     } catch (error) {
-      console.log(`delete BLOG ERROR::ERROR::${error.message}`);
+      console.log('Appwrite serive :: delete-blog :: error', error);
       return false;
     }
   }
@@ -155,7 +152,7 @@ class StorageService {
         config.appwrite_blog
       );
     } catch (error) {
-      console.log(`failed to get blog list::ERROR::${error.message}`);
+      console.log('Appwrite serive :: get-blog-list :: error', error);
       return false;
     }
   }
@@ -169,7 +166,10 @@ class StorageService {
         [Query.equal('category', [`${category}`])]
       );
     } catch (error) {
-      console.log(`failed to fetch data::blog-category::${error.message}`);
+      console.log(
+        'Appwrite serive :: get-blog-list-category-wise :: error',
+        error
+      );
       return false;
     }
   }
@@ -182,18 +182,24 @@ class StorageService {
         [Query.equal('userName', username)]
       );
     } catch (error) {
-      console.log(`failed::ERROR${error.message}`);
+      console.log('Appwrite serive :: check-user-name-exists :: error', error);
       return false;
     }
   }
   // bucket
   //1. create file
-  async createFile(filePath) {
+  async uploadFile(file) {
+    if (!file) {
+      return false;
+    }
     try {
-      if (!filePath) return false;
-      return await this.bucket.createFile(config.appwrite_bucket, filePath);
+      return await this.bucket.createFile(
+        config.appwrite_bucket,
+        ID.unique(),
+        file
+      );
     } catch (error) {
-      console.log(`failed to create bucket file::ERROR::${error.message}`);
+      console.log('Appwrite serive :: upload-file :: error', error);
       return false;
     }
   }
@@ -202,7 +208,7 @@ class StorageService {
     try {
       return await this.bucket.deleteFile(config.appwrite_bucket, fileId);
     } catch (error) {
-      console.log(`failed to delete bucket file::ERROR::${error.message}`);
+      console.log('Appwrite serive :: delete-file :: error', error);
       return false;
     }
   }
@@ -211,7 +217,7 @@ class StorageService {
     try {
       return await this.bucket.getFile(config.appwrite_bucket, fileId);
     } catch (error) {
-      console.log(`failed to get bucket file::ERROR::${error.message}`);
+      console.log('Appwrite serive :: get-file :: error', error);
       return false;
     }
   }
@@ -232,7 +238,7 @@ class StorageService {
 
       return uploadRes;
     } catch (error) {
-      console.log(`failed to update bucket file::ERROR::${error.message}`);
+      console.log('Appwrite serive :: update-file :: error', error);
       return false;
     }
   }
@@ -241,7 +247,7 @@ class StorageService {
     try {
       return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
     } catch (error) {
-      console.log(`failed file preview::ERROR::$${error.message}`);
+      console.log('Appwrite serive :: get-file-preview :: error', error);
       return false;
     }
   }

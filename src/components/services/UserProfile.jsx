@@ -1,22 +1,47 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useLoginStore } from '../../zustStore/Store';
-import { Pencil, UserRoundPen } from 'lucide-react';
+import { LoaderCircle, Pencil, UserRoundPen } from 'lucide-react';
 import Input from '../Elements/Input';
 import { useForm } from 'react-hook-form';
-
+import { storageService } from '../../index';
 function UserProfile() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [edit, setEdit] = useState(false);
   const { loginStatus, loginUser } = useLoginStore((state) => state);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      name: loginUser.name || '',
+      username: loginUser.name.split(' ')[0] + '@' + loginUser.$id.substr(0, 5),
+      bio: 'blog user',
+    },
+  });
 
-  const { register, handleSubmit } = useForm({});
-
-  const userProfileData = () => {
-    console.log('hello');
-    setTimeout(() => {
+  const userProfileData = async (data) => {
+    setError('');
+    const file = await storageService.uploadFile(data.profilePicture[0]);
+    if (!file) {
+      setError('Something went wrong while uploading profilePicture');
       setEdit(false);
-    }, 1000);
+      setLoading(false);
+    }
+
+    data.userId = loginUser.$id;
+    data.profilePicture = file.$id;
+
+    const res = await storageService.setUserProfile(data);
+
+    if (!res) {
+      setError('failed to setup User Profile');
+      setEdit(false);
+      setLoading(false);
+    }
+
+    setEdit(false);
+    setLoading(false);
+    reset();
   };
   const navItem = [
     {
@@ -74,9 +99,13 @@ function UserProfile() {
                     {edit ? (
                       <button
                         type="submit"
-                        className="border text-center w-24 p-1 rounded-lg text-white bg-black font-semibold"
+                        className="  border text-center w-24 p-1 rounded-lg text-white bg-black font-semibold"
                       >
-                        Update
+                        {loading ? (
+                          <LoaderCircle className="animate-spin items-center mx-auto text-white" />
+                        ) : (
+                          'Update'
+                        )}{' '}
                       </button>
                     ) : (
                       <button
@@ -88,9 +117,10 @@ function UserProfile() {
                     )}
                   </div>
                   <div className="flex justify-between p-1 m-2  ">
-                    <label className="p-1">User Name</label>
+                    <label className="p-1">Name</label>
                     <input
-                      disabled={!edit}
+                      {...register('name')}
+                      disabled={true}
                       type="text"
                       className={`w-[70%]  rounded p-2  ${
                         edit ? 'border' : ''
@@ -99,9 +129,10 @@ function UserProfile() {
                   </div>
                   <div className="flex justify-between p-1 m-2">
                     <label htmlFor="" className="p-1">
-                      Email
+                      user Name
                     </label>
                     <input
+                      {...register('username')}
                       disabled={!edit}
                       type="text"
                       className={`w-[70%]  rounded p-2  ${
@@ -114,6 +145,7 @@ function UserProfile() {
                       Bio
                     </label>
                     <input
+                      {...register('bio')}
                       disabled={!edit}
                       type="text"
                       className={`w-[70%]  rounded p-2  ${
@@ -128,6 +160,7 @@ function UserProfile() {
                   </div>
                   <div className="flex items-center">
                     <Input
+                      {...register('profilePicture')}
                       label="choose Profile"
                       className={`w-[70%]  rounded p-2  ${
                         edit ? 'border' : ''
