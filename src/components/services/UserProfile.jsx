@@ -261,11 +261,26 @@ const UpdatePassword = () => {
   const { register, handleSubmit, reset } = useForm();
 
   const updatePWD = (data) => {
-    console.log(data);
-
-    setEdit(false);
     setError('');
-    reset();
+    setLoading(true);
+    if (!data) {
+      setError('All fileds Required!');
+      setEdit(false);
+    }
+
+    authService
+      .updateUserPassword(data)
+      .then((res) => {
+        alert('update passowrd successfuly.');
+        setLoading(false);
+        setError('');
+        setEdit(false);
+      })
+      .catch((err) => {
+        setError(`${err}`);
+        setLoading(false);
+        setEdit(false);
+      });
   };
   return (
     <>
@@ -346,6 +361,7 @@ const AccountDelete = () => {
       <div>
         <div className="w-full h-full text-center m-4 font-bold text-red-700 text-3xl">
           <h1>Delete Account</h1>
+          {error && <p>{error}</p>}
         </div>
 
         <div className="w-full h-full text-center">
