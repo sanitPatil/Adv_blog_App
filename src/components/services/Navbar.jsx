@@ -1,4 +1,8 @@
-import { UserRoundCog } from 'lucide-react';
+import {
+  LoaderCircleIcon,
+  SeparatorHorizontal,
+  UserRoundCog,
+} from 'lucide-react';
 import { BlogAppLogo } from '../../index';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,10 +12,12 @@ import { authService } from '../../index';
 
 function Navbar() {
   const { loginStatus, logOutState } = useLoginStore((state) => state);
+  const [logOutLoading, setLogOutLoading] = useState(false);
   const logout = async () => {
+    setLogOutLoading(true);
     await authService.LogOut();
     logOutState();
-    console.log('hello');
+    setLogOutLoading(false);
   };
   const navItem = [
     {
@@ -85,15 +91,12 @@ function Navbar() {
               <input
                 type="search"
                 id="default-search"
-                className="block w-full p-4 ps-10 text-sm text-gray-900 border-2 border-slate-200 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-full p-2 ps-10 text-sm text-gray-900 border-2 border-slate-200 rounded-2xl bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search Mockups, Logos..."
                 required
               />
-              <button
-                type="submit"
-                className="w-24 h-[80%] bg-slate-200 absolute end-1 bottom-1.5 rounded-xl text-black "
-              >
-                Search
+              <button className=" absolute top-0.5 rounded-xl text-white bg-black right-0.5 border p-1 w-20 hover:bg-blue-900 ">
+                search
               </button>
             </div>
           </form>
@@ -111,7 +114,7 @@ function Navbar() {
               hidden
               absolute right-0 top-9 group-hover:block mt-1 w-32 bg-white  border-gray-300 rounded-lg shadow-lg`}
             >
-              <ul>
+              <ul className="rounded-lg bg-slate-50">
                 <li>
                   <Link
                     to={'/account-setting'}
@@ -131,12 +134,16 @@ function Navbar() {
                   </li>
                 )}
                 {loginStatus && (
-                  <li>
+                  <li className="mt-2">
                     <button
                       onClick={logout}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100 w-full"
+                      className="block px-4 py-2 text-white bg-black rounded hover:bg-red-900 w-full"
                     >
-                      Logout
+                      {logOutLoading ? (
+                        <LoaderCircleIcon className="animate-spin" />
+                      ) : (
+                        'Logout'
+                      )}
                     </button>
                   </li>
                 )}

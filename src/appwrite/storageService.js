@@ -14,8 +14,8 @@ class StorageService {
   // user service
   // 1. set USER PROFILE
   async setUserProfile(data) {
-    console.log(data);
-    if (!data) return data;
+    //console.log(data);
+    if (!data) return 'data is emplty';
     try {
       const res = await this.database.createDocument(
         config.appwrite_db,
@@ -23,7 +23,7 @@ class StorageService {
         ID.unique(),
         data
       );
-      console.log('user-profile-setup successfull.');
+      console.log('user-profile-setup successfully.');
       return res;
     } catch (error) {
       console.log('Appwrite serive :: user-profile-setup :: error', error);

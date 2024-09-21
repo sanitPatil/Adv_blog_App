@@ -14,7 +14,10 @@ class AuthService {
   //1. register
   async register({ name, email, password }) {
     try {
-      return await this.account.create(ID.unique(), email, password, name);
+      const res = await this.account.create(ID.unique(), email, password, name);
+      if (res) {
+        this.login({ email, password });
+      }
     } catch (error) {
       console.log(`Registration Error::${error.message}`);
       return false;
@@ -27,7 +30,6 @@ class AuthService {
       return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
       console.log(`Login Error::${error.message}`);
-      return false;
     }
   }
 

@@ -114,7 +114,7 @@ function Login() {
                 <div className="w-full text-center ">
                   <button
                     type="submit"
-                    className={` font-semibold p-2 rounded-lg border-2 border-black w-[25%] }`}
+                    className={` font-semibold p-2 text-white bg-black rounded-lg border-2 border-black w-[25%] }`}
                     disabled={loading}
                   >
                     {loading ? (
