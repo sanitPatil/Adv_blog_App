@@ -210,10 +210,32 @@ const Security = () => {
   const { register, handleSubmit, reset } = useForm();
 
   const updateEmail = (data) => {
-    console.log(data);
-    setEdit(false);
     setError('');
-    reset();
+    setLoading(true);
+
+    if (!data) {
+      setError('All fileds Are required!');
+      setEdit(true);
+      setLoading(false);
+      return;
+    }
+
+    authService
+      .updateEmail(data)
+      .then((res) => {
+        setError('');
+        setLoading(false);
+        setEdit(false);
+        reset();
+        alert('update email successfully.');
+        return;
+      })
+      .catch((err) => {
+        setError(`${err}`);
+        setLoading(false);
+        setEdit(true);
+        return;
+      });
   };
   return (
     <>
@@ -236,6 +258,17 @@ const Security = () => {
             disabled={!edit}
             placeholder={loginUser && loginUser?.email}
           ></Input>
+          <Input
+            {...register('emailUpdate', {
+              required: true,
+            })}
+            type="password"
+            label="password"
+            className={`p-2 rounded-lg mt-2 mb-2 ${
+              !edit ? 'border-none bg-slate-50' : ''
+            }`}
+            disabled={!edit}
+          ></Input>
           <div className="text-center">
             <button
               type={!edit ? 'button' : 'submit'}
@@ -252,6 +285,8 @@ const Security = () => {
     </>
   );
 };
+
+/*************************************************************************** */
 const UpdatePassword = () => {
   const [edit, setEdit] = useState(false);
   const { loginUser } = useLoginStore((state) => state);
@@ -266,6 +301,8 @@ const UpdatePassword = () => {
     if (!data) {
       setError('All fileds Required!');
       setEdit(false);
+      setLoading(false);
+      return;
     }
 
     authService
@@ -275,11 +312,14 @@ const UpdatePassword = () => {
         setLoading(false);
         setError('');
         setEdit(false);
+        reset();
+        return;
       })
       .catch((err) => {
         setError(`${err}`);
         setLoading(false);
         setEdit(false);
+        return;
       });
   };
   return (
@@ -345,14 +385,12 @@ const AccountDelete = () => {
         setError('');
         setLoading(false);
         setShowModal(false);
-        navigate('/register');
         return;
       })
       .catch((err) => {
         setError(`${err.message}`);
         setLoading(false);
         setShowModal(false);
-
         return;
       });
   };
