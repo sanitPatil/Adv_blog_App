@@ -29,14 +29,14 @@ class StorageService {
       console.log('Appwrite serive :: user-profile-setup :: error', error);
     }
   }
+
   // user service
   // 2. get USER PROFILE
-  async getUserProfile(id) {
+  async getUserProfile() {
     try {
-      return this.database.getDocument(
+      return this.database.listDocuments(
         config.appwrite_db,
-        config.appwrite_user,
-        id
+        config.appwrite_user
       );
     } catch (error) {
       console.log('Appwrite serive :: get-user-profile :: error', error);
@@ -62,16 +62,11 @@ class StorageService {
   // 4. update USER PROFILE
   async updateUserProfile(id, data) {
     try {
-      return this.database.deleteDocument(
+      return this.database.updateDocument(
         config.appwrite_db,
         config.appwrite_user,
         id,
         {
-          //  userid same
-          //   username change
-          //   bio change
-          //   profile picture
-          //   name
           ...data,
         }
       );
@@ -226,6 +221,7 @@ class StorageService {
     try {
       if (!fileId || !filePath) return false;
 
+      await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
       const uploadRes = await this.bucket.createFile(
         config.appwrite_bucket,
         fileId,
@@ -234,8 +230,6 @@ class StorageService {
       if (!uploadRes) {
         return false;
       }
-      await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
-
       return uploadRes;
     } catch (error) {
       console.log('Appwrite serive :: update-file :: error', error);
@@ -243,9 +237,12 @@ class StorageService {
     }
   }
 
-  async getFilePreview(fileId) {
+  async previewFile(fileId) {
+    //console.log(fileId);
+
     try {
-      return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
+      //return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
+      return this.bucket.getFileView(config.appwrite_bucket, fileId);
     } catch (error) {
       console.log('Appwrite serive :: get-file-preview :: error', error);
       return false;

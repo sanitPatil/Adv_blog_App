@@ -6,6 +6,7 @@ const loginStore = create()(
     (set) => ({
       loginStatus: false,
       loginUser: null,
+
       loginState: (data) => set(() => ({ loginStatus: true, loginUser: data })),
       logOutState: () => set(() => ({ loginStatus: false, loginUser: null })),
     }),
@@ -14,4 +15,19 @@ const loginStore = create()(
     }
   )
 );
+
+const profileStore = create()(
+  persist(
+    (set) => ({
+      profileData: null,
+      setProfileData: (data) => set(() => ({ profileData: data })),
+      clearProfileData: () => set(() => ({ profileData: null })),
+    }),
+    {
+      name: 'user-profile',
+    }
+  )
+);
+
 export const useLoginStore = loginStore;
+export const useProfileStore = profileStore;

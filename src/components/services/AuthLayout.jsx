@@ -6,11 +6,11 @@ function AuthLayout({ children, authenticate = true }) {
   const { loginStatus } = useLoginStore((state) => state);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   useEffect(() => {
+    setLoading(true);
     if (authenticate && loginStatus !== authenticate) {
       navigate('/login');
-    } else {
-      setLoading(false);
     }
     setLoading(false);
   }, [loginStatus, navigate, authenticate]);

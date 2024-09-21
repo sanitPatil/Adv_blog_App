@@ -5,11 +5,7 @@ import App from '../App';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <AuthLayout>
-        <App />
-      </AuthLayout>
-    ),
+    element: <App />,
     children: [
       {
         path: '/register',

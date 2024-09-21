@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { useLoginStore } from '../../zustStore/Store';
+import { useEffect, useState } from 'react';
+import { useLoginStore, useProfileStore } from '../../zustStore/Store';
 import { LoaderCircle, Pencil, UserRoundPen } from 'lucide-react';
 import Input from '../Elements/Input';
 import { useForm } from 'react-hook-form';
 import { authService, storageService } from '../../index';
 import { useNavigate } from 'react-router-dom';
-
 function UserProfile() {
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -69,40 +68,57 @@ export default UserProfile;
 const PersonalUpdate = () => {
   const [edit, setEdit] = useState(false);
   const { loginUser } = useLoginStore((state) => state);
+  const { profileData } = useProfileStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [url, setUrl] = useState('');
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      name: loginUser?.name || '',
+      name: profileData?.name || '',
       username:
-        loginUser?.name.split(' ')[0] + '@' + loginUser?.$id.substr(0, 5),
-      bio: 'blog user',
+        profileData?.username ||
+        profileData?.name.split(' ')[0] + '@' + profileData?.$id.substr(0, 5),
+      bio: profileData?.bio || '',
     },
   });
+
+  useEffect(() => {
+    storageService
+      .previewFile(profileData?.profilePicture)
+      .then((res) => setUrl(res));
+  }, []);
   const userProfileData = async (data) => {
     setError('');
-    const file = await storageService.uploadFile(data.profilePicture[0]);
-    if (!file) {
-      setError('Something went wrong while uploading profilePicture');
-      setEdit(false);
-      setLoading(false);
+    setLoading(true);
+    // console.log(data);
+    const fileId = profileData?.profilePicture;
+    const filePath = data?.profilePicture[0];
+    let res = '';
+    if (filePath) {
+      res = await storageService.updateFile({ fileId, filePath });
     }
-
-    data.userId = loginUser.$id;
-    data.profilePicture = file.$id;
-
-    const res = await storageService.setUserProfile(data);
-
     if (!res) {
-      setError('failed to setup User Profile');
-      setEdit(false);
+      setError('failed to update Profile Picture');
       setLoading(false);
+      setEdit(false);
+      return;
     }
+    data.userId = profileData?.userId;
+    data.profilePicture = res.$id;
 
+    const profile = await storageService.updateUserProfile(
+      profileData?.$id,
+      data
+    );
+    if (!profile) {
+      setError('profile Error please try again');
+      setLoading(false);
+      return;
+    }
     setEdit(false);
     setLoading(false);
     reset();
+    alert('profile updated successfully');
   };
   return (
     <div>
@@ -116,23 +132,23 @@ const PersonalUpdate = () => {
             <div className="grid grid-cols-2 gap-6 mt-2">
               <div className="">
                 <div className="flex justify-end pr-10 pt-1">
-                  {edit ? (
-                    <button
-                      type="submit"
-                      className="  border text-center w-24 p-1 rounded-lg text-white bg-black font-semibold"
+                  {!edit ? (
+                    <label
+                      onClick={() => setEdit(true)}
+                      className=" bg-black font-semibold p-2 m-2  text-white rounded-xl"
                     >
-                      {loading ? (
-                        <LoaderCircle className="animate-spin items-center mx-auto text-white" />
-                      ) : (
-                        'Update'
-                      )}{' '}
-                    </button>
+                      Edit
+                    </label>
                   ) : (
                     <button
-                      onClick={() => setEdit((prev) => !prev)}
-                      className="flex justify-between border text-center w-20 p-1 rounded-lg text-white bg-black font-semibold"
+                      type="submit"
+                      className=" bg-black font-semibold p-2 m-2  text-white rounded-xl"
                     >
-                      Edit <Pencil />
+                      {loading ? (
+                        <LoaderCircle className="animate-spin" />
+                      ) : (
+                        'save & update'
+                      )}
                     </button>
                   )}
                 </div>
@@ -168,11 +184,19 @@ const PersonalUpdate = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-between p-2 m-2">
-                <div>
-                  <UserRoundPen className="w-full h-full p-2 rounded-full border text-center" />
+              <div className="flex gap-4">
+                <div className=" mx-auto text-center ">
+                  {profileData ? (
+                    <img
+                      alt="profile picture"
+                      src={url}
+                      className="h-40 w-40 mt-10 mx-auto border hover:border-purple-800 rounded-full text-center hover:scale-125 transition-transform duration-200"
+                    />
+                  ) : (
+                    <UserRoundPen className="w-full h-full p-2 rounded-full border text-center" />
+                  )}
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center mr-6">
                   <Input
                     {...register('profilePicture')}
                     label="choose Profile"
@@ -180,7 +204,7 @@ const PersonalUpdate = () => {
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-full file:border-0
                                 file:text-sm file:font-semibold
-                                file:bg-violet-50 file:text-violet-700
+                                file:bg-violet-50 file:text-violet-700 rounded-2xl 
                                ${
                                  !edit
                                    ? 'hover:file:bg-gray-100'
