@@ -30,19 +30,12 @@ function Register() {
       return;
     }
     const res = await authService.register(data);
-    console.log(res);
 
     if (!res) {
       setError('Error while registrating user please try again...');
-
       setLoading(false);
       return;
     }
-    authService.getCurrentLogin().then((userData) => {
-      if (userData) {
-        loginState(userData);
-      }
-    });
     setLoading(false);
     setError('');
     reset();
@@ -183,17 +176,21 @@ export const CreateProfile = () => {
 
     data.userId = loginUser.$id;
     data.name = loginUser.name;
-    console.log(data);
 
     if (!data) {
       setError('All fileds are required!!!');
       setLoading(false);
       return;
     }
-
+    const picRes = await storageService.uploadFile(data?.profilePicture[0]);
+    if (!picRes) {
+      setError('Failed to store profile Picture !!!');
+      setLoading(false);
+      navigate('/login');
+      return;
+    }
+    data.profilePicture = picRes.$id;
     const res = await storageService.setUserProfile(data);
-    console.log(res);
-
     if (!res) {
       setError(
         'Error while setting user please try again...from account setting'

@@ -16,7 +16,7 @@ class AuthService {
     try {
       const res = await this.account.create(ID.unique(), email, password, name);
       if (res) {
-        this.login({ email, password });
+        return this.login({ email, password });
       }
     } catch (error) {
       console.log(`Registration Error::${error.message}`);
@@ -90,16 +90,14 @@ class AuthService {
   }
 
   // 6. delete Account
-  async deleteAccount(userId) {
-    try {
-      return await this.account.deleteIdentity(userId);
-    } catch (error) {
-      console.log(
-        `Delete Identity Error::Delete Identity Func::${error.message}`
-      );
-      return false;
-    }
-  }
+  // async deleteAccount(userId) {
+  //   try {
+  //     return await this.account.deleteIdentity(userId);
+  //   } catch (error) {
+  //     console.log(`Delete user Error::Delete User Func::${error.message}`);
+  //     return false;
+  //   }
+  // }
 }
 
 const authService = new AuthService();

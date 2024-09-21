@@ -17,9 +17,9 @@ function UserProfile() {
       navName: 'Security',
     },
 
-    {
-      navName: 'Delete Account',
-    },
+    // {
+    //   navName: 'Delete Account',
+    // },
   ];
 
   return (
@@ -56,9 +56,9 @@ function UserProfile() {
         <main id="#security" className={`${activeIndex === 1 ? '' : 'hidden'}`}>
           <Security />
         </main>
-        <main className={`${activeIndex === 2 ? '' : 'hidden'}`}>
+        {/* <main className={`${activeIndex === 2 ? '' : 'hidden'}`}>
           <AccountDelete />
-        </main>
+        </main> */}
       </section>
     </main>
   );
@@ -367,81 +367,83 @@ const UpdatePassword = () => {
 };
 
 ////////////****************************************************************************** */
-const AccountDelete = () => {
-  const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
-  const { loginUser } = useLoginStore((state) => state);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+// const AccountDelete = () => {
+//   const [showModal, setShowModal] = useState(false);
+//   const { loginUser } = useLoginStore((state) => state);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState('');
 
-  const handleDeleteAccount = () => {
-    setError('');
-    setLoading(true);
+//   const handleDeleteAccount = () => {
+//     setError('');
+//     setLoading(true);
+//     if (!loginUser?.$id) {
+//       setError('id could not be found please try again');
+//       setLoading(false);
+//     }
+//     authService
+//       .deleteAccount(loginUser.$id)
+//       .then((res) => {
+//         alert('account deleted succesfully');
+//         setError('');
+//         setLoading(false);
+//         setShowModal(false);
+//         return;
+//       })
+//       .catch((err) => {
+//         setError(`${err.message}`);
+//         setLoading(false);
+//         setShowModal(false);
+//         return;
+//       });
+//   };
+//   return (
+//     <>
+//       <div>
+//         <div className="w-full h-full text-center m-4 font-bold text-red-700 text-3xl">
+//           <h1>Delete Account</h1>
+//           {error && <p>{error}</p>}
+//         </div>
 
-    authService
-      .deleteAccount(loginUser?.$id)
-      .then((res) => {
-        alert('account deleted succesfully');
-        setError('');
-        setLoading(false);
-        setShowModal(false);
-        return;
-      })
-      .catch((err) => {
-        setError(`${err.message}`);
-        setLoading(false);
-        setShowModal(false);
-        return;
-      });
-  };
-  return (
-    <>
-      <div>
-        <div className="w-full h-full text-center m-4 font-bold text-red-700 text-3xl">
-          <h1>Delete Account</h1>
-          {error && <p>{error}</p>}
-        </div>
-
-        <div className="w-full h-full text-center">
-          <button
-            className="bg-red-700 p-2 text-white font-bold "
-            onClick={() => setShowModal(true)}
-          >
-            Delete Account
-          </button>
-        </div>
-        {showModal && (
-          <div className="modal">
-            <div className="modal-content text-red-700 p-2 text-center m-4">
-              <h2>Are you sure?</h2>
-              <p>
-                This action cannot be undone. You will permanently lose all your
-                data associated with this account.
-              </p>
-            </div>
-            <div className="w-full h-full text-red-700 text-center font-semibold">
-              <button
-                onClick={() => setShowModal(false)}
-                className="p-2 font-bold border text-white bg-red-700 rounded-lg m-2"
-              >
-                Cancel
-              </button>
-              <div className="w-full">
-                <button
-                  onClick={handleDeleteAccount}
-                  className="p-2 font-bold border w-30 h-full text-white bg-red-700 rounded-lg"
-                >
-                  {!loading ? (
-                    'Comfirm Delete'
-                  ) : (
-                    <LoaderCircle className="animate-spin" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </>
-  );
-};
+//         <div className="w-full h-full text-center">
+//           <button
+//             className="bg-red-700 p-2 text-white font-bold "
+//             onClick={() => setShowModal(true)}
+//           >
+//             Delete Account
+//           </button>
+//         </div>
+//         {showModal && (
+//           <div className="modal">
+//             <div className="modal-content text-red-700 p-2 text-center m-4">
+//               <h2>Are you sure?</h2>
+//               <p>
+//                 This action cannot be undone. You will permanently lose all your
+//                 data associated with this account.
+//               </p>
+//             </div>
+//             <div className="w-full h-full text-red-700 text-center font-semibold">
+//               <button
+//                 onClick={() => setShowModal(false)}
+//                 className="p-2 font-bold border text-white bg-red-700 rounded-lg m-2"
+//               >
+//                 Cancel
+//               </button>
+//               <div className="w-full">
+//                 <button
+//                   onClick={handleDeleteAccount}
+//                   className="p-2 font-bold border w-30 h-full text-white bg-red-700 rounded-lg"
+//                 >
+//                   {!loading ? (
+//                     'Comfirm Delete'
+//                   ) : (
+//                     <LoaderCircle className="animate-spin" />
+//                   )}
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </>
+//   );
+// };
