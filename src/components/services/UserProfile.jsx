@@ -88,6 +88,7 @@ const PersonalUpdate = () => {
     },
   });
 
+  useEffect(() => {}, []);
   useEffect(() => {
     reset();
     if (profileData?.profilePicture) {
@@ -394,7 +395,7 @@ const UpdatePassword = () => {
               onClick={!edit ? () => setEdit(true) : null}
               className="text-xl p-1  rounded-lg font-bold bg-black text-white"
             >
-              {!edit ? 'Edit' : 'Update & Save'}
+              {!edit ? 'Edit' : loading ? <LoaderCircle /> : 'Update & Save'}
             </button>
           </div>
         </div>

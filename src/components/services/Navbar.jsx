@@ -34,7 +34,7 @@ function Navbar() {
     },
     {
       navName: 'Add-Post',
-      path: '/',
+      path: '/add-post',
       active: loginStatus,
     },
     {
