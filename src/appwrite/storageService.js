@@ -223,20 +223,13 @@ class StorageService {
     }
   }
 
-  async updateFile({ fileId, filePath }) {
+  async fileUpdate(file) {
     try {
-      if (!fileId || !filePath) return false;
-
-      await this.bucket.deleteFile(config.appwrite_bucket, fileId); //
-      const uploadRes = await this.bucket.createFile(
+      return await this.bucket.createFile(
         config.appwrite_bucket,
-        fileId,
-        filePath
+        ID.unique(),
+        file
       );
-      if (!uploadRes) {
-        return false;
-      }
-      return uploadRes;
     } catch (error) {
       console.log('Appwrite serive :: update-file :: error', error);
       return false;

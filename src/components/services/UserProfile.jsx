@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLoginStore, useProfileStore } from '../../zustStore/Store';
-import { LoaderCircle, Pencil, UserRoundPen } from 'lucide-react';
+import { LoaderCircle, UserRoundPen } from 'lucide-react';
 import Input from '../Elements/Input';
 import { useForm } from 'react-hook-form';
 import { authService, storageService } from '../../index';
-import { useNavigate } from 'react-router-dom';
 function UserProfile() {
-  const { loginState, logOutState, loginStatus, loginUser } = useLoginStore(
-    (state) => state
-  );
+  const { loginUser } = useLoginStore((state) => state);
   const { setProfileData } = useProfileStore((state) => state);
-  const { profileData, loadingProfile } = useProfileStore((state) => state);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [profileLoading, setProfileLoading] = useState(false);
   useEffect(() => {
@@ -23,7 +20,7 @@ function UserProfile() {
       }
     })();
     setProfileLoading(false);
-  }, [setProfileData, loginUser]);
+  }, []);
   const navItem = [
     {
       navName: 'General',
@@ -31,10 +28,6 @@ function UserProfile() {
     {
       navName: 'Security',
     },
-
-    // {
-    //   navName: 'Delete Account',
-    // },
   ];
 
   return (
@@ -71,9 +64,6 @@ function UserProfile() {
         <main id="#security" className={`${activeIndex === 1 ? '' : 'hidden'}`}>
           <Security />
         </main>
-        {/* <main className={`${activeIndex === 2 ? '' : 'hidden'}`}>
-          <AccountDelete />
-        </main> */}
       </section>
     </main>
   );
@@ -83,11 +73,11 @@ export default UserProfile;
 // ***********************************************************************************
 const PersonalUpdate = () => {
   const [edit, setEdit] = useState(false);
-  const { loginUser } = useLoginStore((state) => state);
-  const { profileData } = useProfileStore((state) => state);
+  const { profileData, setProfileData } = useProfileStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState();
+
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
       name: profileData?.name || '',
@@ -99,28 +89,38 @@ const PersonalUpdate = () => {
   });
 
   useEffect(() => {
-    storageService
-      .previewFile(profileData?.profilePicture)
-      .then((res) => setUrl(res));
-  }, []);
+    reset();
+    if (profileData?.profilePicture) {
+      storageService.previewFile(profileData?.profilePicture).then((res) => {
+        setUrl(res);
+      });
+    }
+  }, [profileData]);
+
   const userProfileData = async (data) => {
     setError('');
     setLoading(true);
     // console.log(data);
     const fileId = profileData?.profilePicture;
-    const filePath = data?.profilePicture[0];
-    let res = '';
-    if (filePath) {
-      res = await storageService.updateFile({ fileId, filePath });
-    }
-    if (!res) {
-      setError('failed to update Profile Picture');
-      setLoading(false);
-      setEdit(false);
-      return;
+    //console.log(fileId);
+
+    const file = data?.profilePicture[0];
+    //console.log(filePath);
+
+    if (file) {
+      const uploadRes = await storageService.fileUpdate(file);
+      if (!uploadRes) {
+        setError('failed to update Profile Picture');
+        setLoading(false);
+        return;
+      }
+      data.profilePicture = uploadRes.$id; //if your has given new profile picture
+
+      await storageService.deleteFile(fileId);
+    } else {
+      data.profilePicture = fileId; // this for if user has not given profile picture
     }
     data.userId = profileData?.userId;
-    data.profilePicture = res.$id;
 
     const profile = await storageService.updateUserProfile(
       profileData?.$id,
@@ -202,10 +202,12 @@ const PersonalUpdate = () => {
               </div>
               <div className="flex gap-4">
                 <div className=" mx-auto text-center ">
-                  {profileData ? (
+                  {url ? (
                     <img
-                      alt="profile picture"
-                      src={url}
+                      key={Date.now()}
+                      // onError={() => console.log('failed to load Image')}
+                      alt={profileData?.name}
+                      src={String(url)}
                       className="h-40 w-40 mt-10 mx-auto border hover:border-purple-800 rounded-full text-center hover:scale-125 transition-transform duration-200"
                     />
                   ) : (
