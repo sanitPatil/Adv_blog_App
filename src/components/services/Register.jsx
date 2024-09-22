@@ -36,15 +36,22 @@ function Register() {
       setLoading(false);
       return;
     }
-    authService.getCurrentLogin().then((userData) => {
-      if (userData) {
-        loginState(userData);
-      } else {
-        setError('Regitration Error. failed get Data');
-        setLoading(false);
-        logOutState();
-      }
-    });
+    // authService.getCurrentLogin().then((userData) => {
+    //   if (userData) {
+    //     loginState(userData);
+    //   } else {
+    //     setError('Regitration Error. failed get Data');
+    //     setLoading(false);
+    //     logOutState();
+    //   }
+    // });
+    const currentLogin = await authService.getCurrentLogin();
+    if (!currentLogin) {
+      setError('failed to get current login');
+      setLoading(false);
+      return;
+    }
+    loginState(currentLogin);
     setLoading(false);
     setError('');
     reset();
@@ -214,8 +221,14 @@ export const CreateProfile = () => {
       return;
     }
     console.log('done 3');
-
-    setProfileData(res);
+    const profileRes = await storageService.getUserProfile(loginUser.$id);
+    if (!profileRes) {
+      setError('failed to get Profile Data ');
+      setLoading(false);
+      navigate('/');
+      return;
+    }
+    setProfileData(profileRes);
     setLoading(false);
     setError('');
     reset();

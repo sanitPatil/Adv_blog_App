@@ -32,12 +32,16 @@ class StorageService {
 
   // user service
   // 2. get USER PROFILE
-  async getUserProfile() {
+  async getUserProfile(userId) {
+    //console.log(typeof userId);
     try {
-      return this.database.listDocuments(
+      const res = await this.database.listDocuments(
         config.appwrite_db,
-        config.appwrite_user
+        config.appwrite_user,
+        [Query.equal('userId', [`${userId}`])] // put this in array
       );
+      //console.log(res);
+      return res;
     } catch (error) {
       console.log('Appwrite serive :: get-user-profile :: error', error);
     }

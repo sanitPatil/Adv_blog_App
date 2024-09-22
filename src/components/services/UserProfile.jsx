@@ -6,8 +6,24 @@ import { useForm } from 'react-hook-form';
 import { authService, storageService } from '../../index';
 import { useNavigate } from 'react-router-dom';
 function UserProfile() {
+  const { loginState, logOutState, loginStatus, loginUser } = useLoginStore(
+    (state) => state
+  );
+  const { setProfileData } = useProfileStore((state) => state);
+  const { profileData, loadingProfile } = useProfileStore((state) => state);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [profileLoading, setProfileLoading] = useState(false);
+  useEffect(() => {
+    setProfileLoading(true);
+    (async () => {
+      const profileRes = await storageService.getUserProfile(loginUser?.$id);
 
+      if (profileRes) {
+        setProfileData(profileRes.documents[0]);
+      }
+    })();
+    setProfileLoading(false);
+  }, [setProfileData, loginUser]);
   const navItem = [
     {
       navName: 'General',
@@ -50,7 +66,7 @@ function UserProfile() {
       </div>
       <section className=" w-full mx-auto items-center mt-12">
         <main className={`${activeIndex === 0 ? '' : 'hidden'}`}>
-          <PersonalUpdate />
+          {profileLoading ? <LodingSkeleton /> : <PersonalUpdate />}
         </main>
         <main id="#security" className={`${activeIndex === 1 ? '' : 'hidden'}`}>
           <Security />
@@ -77,7 +93,7 @@ const PersonalUpdate = () => {
       name: profileData?.name || '',
       username:
         profileData?.username ||
-        profileData?.name.split(' ')[0] + '@' + profileData?.$id.substr(0, 5),
+        profileData?.name?.split(' ')[0] + '@' + profileData?.$id?.substr(0, 5),
       bio: profileData?.bio || '',
     },
   });
@@ -465,3 +481,23 @@ const UpdatePassword = () => {
 //     </>
 //   );
 // };
+
+const LodingSkeleton = () => {
+  return (
+    <div className="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">
+      <div className="animate-pulse flex space-x-4">
+        <div className="rounded-full bg-slate-700 h-10 w-10"></div>
+        <div className="flex-1 space-y-6 py-1">
+          <div className="h-2 bg-slate-700 rounded"></div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+              <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+            </div>
+            <div className="h-2 bg-slate-700 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

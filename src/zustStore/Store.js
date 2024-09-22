@@ -20,6 +20,7 @@ const profileStore = create()(
   persist(
     (set) => ({
       profileData: null,
+
       setProfileData: (data) => set(() => ({ profileData: data })),
       clearProfileData: () => set(() => ({ profileData: null })),
     }),

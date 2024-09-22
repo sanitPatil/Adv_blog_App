@@ -142,7 +142,7 @@ function Navbar() {
                       className="block px-4 py-2 text-white bg-black rounded hover:bg-red-900 w-full"
                     >
                       {logOutLoading ? (
-                        <LoaderCircleIcon className="animate-spin" />
+                        <LoaderCircleIcon className="animate-spin w-full text-center" />
                       ) : (
                         'Logout'
                       )}

@@ -40,25 +40,19 @@ function Login() {
       setLoaidng(false);
       return;
     }
-    authService
-      .getCurrentLogin()
-      .then((userData) => {
-        loginState(userData);
-      })
-      .catch((error) => {
-        setError(error.message);
-        logOutState();
-      });
 
-    storageService.getUserProfile().then((res) => {
-      if (res) {
-        setProfileData(res.documents[0]);
-      } else {
-        setError('failed to get profile data ');
-        setLoaidng(false);
-        logOutState();
-      }
-    });
+    const currentUser = await authService.getCurrentLogin();
+    if (!currentUser) {
+      setError('failed to login ');
+      logOutState();
+      setLoaidng(false);
+      return;
+    }
+    loginState(currentUser);
+    // console.log(currentUser);
+
+    // console.log(currentUser.$id);
+
     setLoaidng(false);
     navigate('/');
   };
