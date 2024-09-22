@@ -73,7 +73,7 @@ export default UserProfile;
 // ***********************************************************************************
 const PersonalUpdate = () => {
   const [edit, setEdit] = useState(false);
-  const { profileData, setProfileData } = useProfileStore((state) => state);
+  const { profileData } = useProfileStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState();
@@ -245,16 +245,21 @@ const PersonalUpdate = () => {
 const Security = () => {
   //security
   const [edit, setEdit] = useState(false);
-  const { loginUser } = useLoginStore((state) => state);
+  const { loginUser, loginState } = useLoginStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      email: loginUser?.email,
+    },
+  });
 
-  const { register, handleSubmit, reset } = useForm();
+  useEffect(() => {}, [loginUser]);
 
   const updateEmail = async (data) => {
     setError('');
     setLoading(true);
-    console.log(data);
+    //console.log(data);
 
     if (!data) {
       setError('All fileds Are required!');
@@ -268,6 +273,7 @@ const Security = () => {
       setLoading(false);
     }
     setError('');
+    loginState(emailRes);
     setEdit(false);
     setLoading(false);
     reset();
@@ -311,7 +317,7 @@ const Security = () => {
               onClick={!edit ? () => setEdit(true) : null}
               className="text-xl p-2 rounded-lg font-bold bg-black text-white"
             >
-              {!edit ? 'Edit' : 'Update&save'}
+              {!edit ? 'Edit' : loading ? <LoaderCircle /> : 'Update&save'}
             </button>
           </div>
         </form>
@@ -331,7 +337,7 @@ const UpdatePassword = () => {
 
   const { register, handleSubmit, reset } = useForm();
 
-  const updatePWD = (data) => {
+  const updatePWD = async (data) => {
     setError('');
     setLoading(true);
     if (!data) {
@@ -341,25 +347,20 @@ const UpdatePassword = () => {
       return;
     }
 
-    authService
-      .updateUserPassword(data)
-      .then((res) => {
-        alert('update passowrd successfuly.');
-        setLoading(false);
-        setError('');
-        setEdit(false);
-        reset();
-        return;
-      })
-      .catch((err) => {
-        setError(`${err}`);
-        setLoading(false);
-        setEdit(false);
-        return;
-      });
+    const res = await authService.updateUserPassword(data);
+    if (!res) {
+      setError(`failed to update password`);
+      setLoading(false);
+      return;
+    }
+
+    alert('password update Successfully');
+    reset();
+    setLoading(false);
+    setEdit(false);
   };
   return (
-    <>
+    <div>
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit(updatePWD)}>
         <div className=" mt-2 p-2">
@@ -398,7 +399,7 @@ const UpdatePassword = () => {
           </div>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

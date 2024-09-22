@@ -79,9 +79,9 @@ class AuthService {
   }
 
   // 5. update Password
-  async updateUserPassword({ password, oldPassword }) {
+  async updateUserPassword({ newPassword, oldPassword }) {
     try {
-      return await this.account.updatePassword(password, oldPassword);
+      return await this.account.updatePassword(newPassword, oldPassword);
     } catch (error) {
       console.log(
         `Update-Password Error::Update-Password Func::${error.message}`
