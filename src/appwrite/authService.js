@@ -30,6 +30,7 @@ class AuthService {
       return await this.account.createEmailPasswordSession(email, password);
     } catch (error) {
       console.log(`Login Error::${error.message}`);
+      return false;
     }
   }
 
@@ -57,7 +58,7 @@ class AuthService {
 
   // 5. update Email
 
-  async updateEmail({ email, password }) {
+  async updateUserEmail({ email, password }) {
     try {
       return await this.account.updateEmail(email, password);
     } catch (error) {

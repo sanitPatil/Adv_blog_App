@@ -188,11 +188,13 @@ class StorageService {
       return false;
     }
     try {
-      return await this.bucket.createFile(
+      const res = await this.bucket.createFile(
         config.appwrite_bucket,
         ID.unique(),
         file
       );
+      console.log('upload successfull UPLOADFILE');
+      return res;
     } catch (error) {
       console.log('Appwrite serive :: upload-file :: error', error);
       return false;

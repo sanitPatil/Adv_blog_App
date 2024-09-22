@@ -4,10 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
 import { Loader, LoaderCircle, User2Icon } from 'lucide-react';
-import { useLoginStore } from '../../zustStore/Store';
+import { useLoginStore, useProfileStore } from '../../zustStore/Store';
 
 function Register() {
-  const { loginState } = useLoginStore((state) => state);
+  const { loginState, logOutState } = useLoginStore((state) => state);
   const [profile, setProfile] = useState(false);
   const navigate = useNavigate();
   const {
@@ -36,6 +36,15 @@ function Register() {
       setLoading(false);
       return;
     }
+    authService.getCurrentLogin().then((userData) => {
+      if (userData) {
+        loginState(userData);
+      } else {
+        setError('Regitration Error. failed get Data');
+        setLoading(false);
+        logOutState();
+      }
+    });
     setLoading(false);
     setError('');
     reset();
@@ -169,7 +178,9 @@ export const CreateProfile = () => {
   const [error, setError] = useState('');
   const { handleSubmit, register, reset } = useForm();
   const { loginUser } = useLoginStore((state) => state);
-
+  const { setProfileData, clearProfileData } = useProfileStore(
+    (state) => state
+  );
   const completeUserProfile = async (data) => {
     setLoading(true);
     setError('');
@@ -182,6 +193,8 @@ export const CreateProfile = () => {
       setLoading(false);
       return;
     }
+    console.log('done 1');
+
     const picRes = await storageService.uploadFile(data?.profilePicture[0]);
     if (!picRes) {
       setError('Failed to store profile Picture !!!');
@@ -189,16 +202,20 @@ export const CreateProfile = () => {
       navigate('/login');
       return;
     }
+    console.log('done 2');
+
     data.profilePicture = picRes.$id;
     const res = await storageService.setUserProfile(data);
     if (!res) {
       setError(
         'Error while setting user please try again...from account setting'
       );
-
       setLoading(false);
       return;
     }
+    console.log('done 3');
+
+    setProfileData(res);
     setLoading(false);
     setError('');
     reset();

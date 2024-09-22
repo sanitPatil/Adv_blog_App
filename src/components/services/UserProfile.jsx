@@ -233,9 +233,10 @@ const Security = () => {
 
   const { register, handleSubmit, reset } = useForm();
 
-  const updateEmail = (data) => {
+  const updateEmail = async (data) => {
     setError('');
     setLoading(true);
+    console.log(data);
 
     if (!data) {
       setError('All fileds Are required!');
@@ -243,23 +244,16 @@ const Security = () => {
       setLoading(false);
       return;
     }
-
-    authService
-      .updateEmail(data)
-      .then((res) => {
-        setError('');
-        setLoading(false);
-        setEdit(false);
-        reset();
-        alert('update email successfully.');
-        return;
-      })
-      .catch((err) => {
-        setError(`${err}`);
-        setLoading(false);
-        setEdit(true);
-        return;
-      });
+    const emailRes = await authService.updateUserEmail(data);
+    if (!emailRes) {
+      setError('failed to update Email please try again');
+      setLoading(false);
+    }
+    setError('');
+    setEdit(false);
+    setLoading(false);
+    reset();
+    alert(`email update successfully`);
   };
   return (
     <>
@@ -271,7 +265,7 @@ const Security = () => {
         <form onSubmit={handleSubmit(updateEmail)}>
           <div className="w-full  mt-4  text-ceter"></div>
           <Input
-            {...register('emailUpdate', {
+            {...register('email', {
               required: true,
             })}
             type="email"
@@ -283,7 +277,7 @@ const Security = () => {
             placeholder={loginUser && loginUser?.email}
           ></Input>
           <Input
-            {...register('emailUpdate', {
+            {...register('password', {
               required: true,
             })}
             type="password"

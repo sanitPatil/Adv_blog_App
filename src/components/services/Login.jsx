@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { authService, Container } from '../../index';
+import { authService, Container, storageService } from '../../index';
 import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
 import { Loader } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useLoginStore } from '../../zustStore/Store';
+import { useLoginStore, useProfileStore } from '../../zustStore/Store';
 function Login() {
   const { loginState, logOutState } = useLoginStore((state) => state);
-
+  const { setProfileData, clearProfileData } = useProfileStore(
+    (state) => state
+  );
   const [error, setError] = React.useState('');
   const [loading, setLoaidng] = useState(false);
   const navigate = useNavigate();
@@ -33,9 +35,8 @@ function Login() {
     }
     const session = await authService.login(data);
     if (!session) {
-      console.log(session);
-
-      setError(session.error);
+      console.log('Error', session);
+      setError('failed to login ');
       setLoaidng(false);
       return;
     }
@@ -48,6 +49,16 @@ function Login() {
         setError(error.message);
         logOutState();
       });
+
+    storageService.getUserProfile().then((res) => {
+      if (res) {
+        setProfileData(res.documents[0]);
+      } else {
+        setError('failed to get profile data ');
+        setLoaidng(false);
+        logOutState();
+      }
+    });
     setLoaidng(false);
     navigate('/');
   };

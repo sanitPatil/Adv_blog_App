@@ -6,17 +6,19 @@ import {
 import { BlogAppLogo } from '../../index';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLoginStore } from '../../zustStore/Store';
+import { useLoginStore, useProfileStore } from '../../zustStore/Store';
 import { authService } from '../../index';
 // all post , stats , category wise search, search, home, add-post
 
 function Navbar() {
   const { loginStatus, logOutState } = useLoginStore((state) => state);
   const [logOutLoading, setLogOutLoading] = useState(false);
+  const { clearProfileData } = useProfileStore((state) => state);
   const logout = async () => {
     setLogOutLoading(true);
     await authService.LogOut();
     logOutState();
+    clearProfileData();
     setLogOutLoading(false);
   };
   const navItem = [
