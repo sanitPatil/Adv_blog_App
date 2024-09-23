@@ -72,23 +72,25 @@ function UserProfile() {
 export default UserProfile;
 // ***********************************************************************************
 const PersonalUpdate = () => {
+  const { loginUser } = useLoginStore((state) => state);
+  const { setProfileData } = useProfileStore((state) => state);
   const [edit, setEdit] = useState(false);
   const { profileData } = useProfileStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [url, setUrl] = useState();
-
+  let defaultData = '';
+  useEffect(() => {
+    const defaultData = localStorage.getItem('user-profile');
+  }, [profileData, loginUser]);
   const { register, handleSubmit, reset } = useForm({
     defaultValues: {
-      name: profileData?.name || '',
-      username:
-        profileData?.username ||
-        profileData?.name?.split(' ')[0] + '@' + profileData?.$id?.substr(0, 5),
-      bio: profileData?.bio || '',
+      name: profileData?.name || defaultData?.name,
+      username: profileData?.username || defaultData?.username,
+      bio: profileData?.bio || defaultData?.bio,
     },
   });
 
-  useEffect(() => {}, []);
   useEffect(() => {
     reset();
     if (profileData?.profilePicture) {
@@ -96,7 +98,7 @@ const PersonalUpdate = () => {
         setUrl(res);
       });
     }
-  }, [profileData]);
+  }, [profileData, loginUser]);
 
   const userProfileData = async (data) => {
     setError('');

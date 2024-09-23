@@ -83,15 +83,20 @@ class StorageService {
   //----------------BLOG SERIVCES ------------------------------//
 
   // 1. create BLOG
-  async createBlog({ data }) {
+  async createBlog({
+    userId,
+    featuredImage,
+    isPublished,
+    category,
+    content,
+    title,
+  }) {
     try {
       return await this.database.createDocument(
         config.appwrite_db,
         config.appwrite_blog,
         ID.unique(),
-        {
-          ...data,
-        }
+        { userId, featuredImage, isPublished, category, content, title }
       );
     } catch (error) {
       console.log('Appwrite serive :: create-blog :: error', error);
