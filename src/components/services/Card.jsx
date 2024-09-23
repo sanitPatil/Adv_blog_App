@@ -26,7 +26,7 @@ function Card({ blog }) {
               <div className="px-6 py-4">
                 <div className="font-bold text-xl mb-2">{blog.title}</div>
                 <div className="text-gray-700 text-base">
-                  {parse(blog.content)}
+                  {blog && parse(blog.content)}
                 </div>
               </div>
               <div className="absolute inset-2 text-white flex items-start mt-2 justify-end opacity-0 transition-opacity duration-300 hover:opacity-100 ">
