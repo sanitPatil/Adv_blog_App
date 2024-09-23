@@ -45,7 +45,7 @@ function RTE({ control, name, defaultValue = '' }) {
             onChange={(value) => field.onChange(value)}
             value={field.value || defaultValue}
             theme="snow"
-            className="w-full h-40"
+            className="w-full h-[60vh] "
             modules={modules}
             formats={formats}
           />
