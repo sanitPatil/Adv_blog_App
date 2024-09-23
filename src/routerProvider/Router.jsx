@@ -1,5 +1,13 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { Login, Register, UserProfile, AuthLayout, AddPost, Home } from '..';
+import {
+  Login,
+  Register,
+  UserProfile,
+  AuthLayout,
+  AddPost,
+  Home,
+  AllPost,
+} from '..';
 import App from '../App';
 
 const router = createBrowserRouter([
@@ -11,12 +19,14 @@ const router = createBrowserRouter([
         path: '/Home',
         element: <Home />,
       },
-      // {
-      //   path: '/Aall-post',
-      //   element:(<AuthLayout>
-      //   <AllPost/>
-      //   </AuthLayout>),
-      // },
+      {
+        path: '/all-post',
+        element: (
+          <AuthLayout>
+            <AllPost />
+          </AuthLayout>
+        ),
+      },
       {
         path: '/add-post',
         element: (

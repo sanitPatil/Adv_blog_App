@@ -28,8 +28,8 @@ function Navbar() {
       active: true,
     },
     {
-      navName: 'All-Post',
-      path: '/',
+      navName: 'all-Post',
+      path: '/all-post',
       active: loginStatus,
     },
     {
@@ -64,7 +64,9 @@ function Navbar() {
                 (item) =>
                   item.active && (
                     <Link to={item.path} key={item.navName}>
-                      <li>{item.navName}</li>
+                      <li className="font-semibold text-xl hover:underline hover:underline-offset-4">
+                        {item.navName}
+                      </li>
                     </Link>
                   )
               )}
