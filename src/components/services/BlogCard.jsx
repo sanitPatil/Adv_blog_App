@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { storageService } from '../../index';
 import parse from 'html-react-parser';
 import { useLoginStore } from '../../zustStore/Store';
+import { LoaderCircle } from 'lucide-react';
 function BlogCard() {
   const [blog, setBlog] = useState({});
   const [url, setUrl] = useState('');
@@ -12,7 +13,8 @@ function BlogCard() {
 
   const isAuthor = loginUser && blog ? loginUser?.$id === blog?.userId : false;
   //console.log('isAuthor', isAuthor);
-
+  const [Error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const { blogId } = useParams();
   //console.log(blog);
   const navigate = useNavigate();
@@ -31,9 +33,31 @@ function BlogCard() {
     }
   }, []);
   //console.log(blogId);
+  const deletePost = async (blog) => {
+    setLoading(true);
+    setError('');
+    const resoureceDelete = await storageService.deleteFile(blog.featuredImage);
+    if (!resoureceDelete) {
+      setError('failed to delete');
+      setLoading(false);
+      return;
+    }
 
+    const delRes = await storageService.deleteBlog(blog.$id);
+    if (!delRes) {
+      setLoading(false);
+      setError('failed to delete blog');
+      return;
+    }
+    setError('');
+    setLoading(false);
+    navigate('/all-post');
+
+    alert('successfully deleted ');
+  };
   return (
     <div className=" bg-white rounded-lg shadow-lg ">
+      {Error && <p>{Error}</p>}
       <div className="w-full  text-center justify-center flex">
         <img
           src={url}
@@ -67,13 +91,20 @@ function BlogCard() {
           {isAuthor && (
             <div className="w-full  m-2 ">
               <button
-                onClick={() => navigate('/add-post', { state: { blog } })}
+                // onClick={() => navigate('/add-post', { state: { blog } })}
                 className="w-28 border p-2  text-white bg-black rounded-lg "
               >
                 Edit Blog
               </button>
-              <button className="w-28 ml-2 border p-2  text-white bg-black rounded-lg ">
-                Delete Blog
+              <button
+                onClick={() => deletePost(blog)}
+                className="w-28 ml-2 border p-2  text-white bg-black text-center rounded-lg "
+              >
+                {loading ? (
+                  <LoaderCircle className="animate-spin" />
+                ) : (
+                  'Delete Blog'
+                )}
               </button>
             </div>
           )}

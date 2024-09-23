@@ -18,11 +18,9 @@ function AllPost() {
   }, []);
 
   return (
-    <div className="w-full mt-2  mb-24">
-      <div>
-        {postList &&
-          postList.map((blog) => <Card blog={blog} key={blog.title} />)}
-      </div>
+    <div className="w-full mt-10 flex flex-wrap mb-24 gap-6 justify-start">
+      {postList &&
+        postList.map((blog) => <Card blog={blog} key={blog.title} />)}
     </div>
   );
 }

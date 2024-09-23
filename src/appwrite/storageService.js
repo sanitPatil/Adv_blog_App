@@ -84,15 +84,19 @@ class StorageService {
   //----------------BLOG SERIVCES ------------------------------//
 
   // 1. create BLOG
-  async createBlog(
-    slug,
-    { userId, featuredImage, isPublished, category, content, title }
-  ) {
+  async createBlog({
+    userId,
+    featuredImage,
+    isPublished,
+    category,
+    content,
+    title,
+  }) {
     try {
       return await this.database.createDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        slug,
+        ID.unique(),
         { userId, featuredImage, isPublished, category, content, title }
       );
     } catch (error) {
@@ -101,12 +105,12 @@ class StorageService {
     }
   }
   // 2. get BLOG // universal call
-  async getBlog(slug) {
+  async getBlog(id) {
     try {
       return this.database.getDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        slug
+        id
       );
     } catch (error) {
       console.log('Appwrite serive :: get-blog:: error', error);
@@ -115,12 +119,12 @@ class StorageService {
   }
 
   //3. update BLOG
-  async updateBlog(slug, { data }) {
+  async updateBlog(id, { data }) {
     try {
       return this.database.updateDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        slug,
+        id,
         {
           ...data,
         }
@@ -132,12 +136,12 @@ class StorageService {
   }
 
   // 4. delete POST
-  async deleteBlog(slug) {
+  async deleteBlog(id) {
     try {
       return this.database.deleteDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        slug
+        id
       );
     } catch (error) {
       console.log('Appwrite serive :: delete-blog :: error', error);

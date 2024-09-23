@@ -8,20 +8,14 @@ const AddPost = () => {
   const navigate = useNavigate();
   const category_options = ['technology', 'lifestyle', 'education', 'travel'];
   const { loginUser } = useLoginStore((state) => state);
-  const state = useLocation().state;
-  let blog = '';
-  if (state) {
-    blog = state.blog;
-  }
-  console.log(blog);
 
   const { handleSubmit, register, control, watch, getValues, setValue, reset } =
     useForm({
       defaultValues: {
-        content: blog?.content || '',
-        title: blog?.title || '',
-        isPublished: blog?.isPublished || true,
-        category: blog?.category || 'travel',
+        content: '',
+        title: '',
+        isPublished: true,
+        category: 'travel',
       },
     });
 
@@ -30,47 +24,6 @@ const AddPost = () => {
   const [Edit, setEdit] = useState(false);
 
   // UPDATE BLOG METHOD
-  const updatePost = async (data) => {
-    setLoading(true);
-    setError('');
-    setEdit(false);
-    if (!data) {
-      setError('All fileds required!');
-      setLoading(false);
-      setEdit(true);
-      return;
-    }
-    let delImageRes = await storageService.deleteFile(blog?.featuredImage);
-    //const blogImage = await storageService.uploadFile(data?.blogPicture[0]);
-    if (!blogImage) {
-      setError('failed to uplaod blog Image!');
-      setLoading(false);
-      setEdit(true);
-      return;
-    }
-    const blogUplaod = await storageService.updateBlog(blog?.$id, {
-      userId: loginUser.$id,
-      featuredImage: blogImage.$id,
-      title: data?.slug,
-      isPublished: Boolean(data?.isPublished),
-      content: data?.content,
-      category: data?.category,
-    });
-    if (!blogUplaod) {
-      setError('failed to uplaod blog !');
-      setLoading(false);
-      setEdit(true);
-      return;
-    }
-    console.log(blogUplaod);
-
-    setError('');
-    setEdit(false);
-    setLoading(false);
-    reset();
-    alert('Blog Added successfully!');
-    navigate('/all-post');
-  };
 
   // CREATE BLOG METHOD
 
@@ -102,7 +55,7 @@ const AddPost = () => {
       return;
     }
 
-    const blogUpload = await storageService.createBlog(data?.slug, {
+    const blogUpload = await storageService.createBlog({
       userId: loginUser.$id,
       featuredImage: blogImage.$id,
       title: data?.slug,
@@ -154,9 +107,7 @@ const AddPost = () => {
       {loading ? (
         <LodingSkeleton />
       ) : (
-        <form
-          onSubmit={!blog ? handleSubmit(addPost) : handleSubmit(updatePost)}
-        >
+        <form onSubmit={handleSubmit(addPost)}>
           <div className="grid grid-cols-5 gap-8 w-full p-2">
             <div className="col-span-3 h-full">
               <div className="  w-full p-2 min-h-[80vh]">
@@ -247,21 +198,12 @@ const AddPost = () => {
                   >
                     reset
                   </button>
-                  {!blog ? (
-                    <button
-                      type="submit"
-                      className="p-2 m-2 text-white bg-black rounded-full w-24 text-center font-semibold"
-                    >
-                      save
-                    </button>
-                  ) : (
-                    <button
-                      type="submit"
-                      className="p-2 m-2 text-white bg-black rounded-full w-24 text-center font-semibold"
-                    >
-                      update
-                    </button>
-                  )}
+                  <button
+                    type="submit"
+                    className="p-2 m-2 text-white bg-black rounded-full w-24 text-center font-semibold"
+                  >
+                    save
+                  </button>
                 </div>
               </div>
             </div>
