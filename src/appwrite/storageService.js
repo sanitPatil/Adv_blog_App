@@ -221,7 +221,9 @@ class StorageService {
 
   async getFile(fileId) {
     try {
-      return await this.bucket.getFile(config.appwrite_bucket, fileId);
+      const res = await this.bucket.getFile(config.appwrite_bucket, fileId);
+      console.log(res);
+      return res;
     } catch (error) {
       console.log('Appwrite serive :: get-file :: error', error);
       return false;
@@ -246,7 +248,10 @@ class StorageService {
 
     try {
       //return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
-      return this.bucket.getFileView(config.appwrite_bucket, fileId);
+      // console.log(fileId);
+
+      const res = this.bucket.getFilePreview(config.appwrite_bucket, fileId);
+      return res;
     } catch (error) {
       console.log('Appwrite serive :: get-file-preview :: error', error);
       return false;

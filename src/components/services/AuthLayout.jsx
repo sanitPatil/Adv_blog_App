@@ -14,7 +14,7 @@ function AuthLayout({ children, authenticate = true }) {
     }
     setLoading(false);
   }, [loginStatus, navigate, authenticate]);
-  return loading ? 'Loading...' : <div>{children}</div>;
+  return loading ? 'Loading...' : <>{children}</>;
 }
 
 export default AuthLayout;

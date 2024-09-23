@@ -7,6 +7,8 @@ import {
   AddPost,
   Home,
   AllPost,
+  Card,
+  BlogCard,
 } from '..';
 import App from '../App';
 
@@ -24,6 +26,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout>
             <AllPost />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: '/blog/:blogId',
+        element: (
+          <AuthLayout>
+            <BlogCard />
           </AuthLayout>
         ),
       },

@@ -15,9 +15,13 @@ import Footer from './components/services/Footer';
 import AddPost from './components/services/AddPost';
 import Home from './components/services/Home';
 import AllPost from './components/services/AllPost';
+import Card from './components/services/Card';
+import BlogCard from './components/services/BlogCard';
 import AuthLayout from './components/services/AuthLayout';
 
 export {
+  BlogCard,
+  Card,
   AllPost,
   Home,
   AddPost,
