@@ -13,10 +13,11 @@ import Navbar from './components/services/Navbar';
 import BlogAppLogo from './components/services/BlogAppLogo';
 import Footer from './components/services/Footer';
 import AddPost from './components/services/AddPost';
-
+import Home from './components/services/Home';
 import AuthLayout from './components/services/AuthLayout';
 
 export {
+  Home,
   AddPost,
   AuthLayout,
   Footer,

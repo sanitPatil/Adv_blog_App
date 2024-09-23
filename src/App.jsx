@@ -19,7 +19,7 @@ function App() {
     <div>
       <Navbar />
       <Outlet />
-      <footer className=" bg-slate-200 z-0 w-full text-center p-4 fixed bottom-0 text-sm border-box">
+      <footer className=" bg-slate-200 z-0 w-full text-center p-4  text-sm border-box">
         <Footer />
       </footer>
     </div>

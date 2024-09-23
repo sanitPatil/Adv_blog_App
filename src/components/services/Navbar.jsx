@@ -24,7 +24,7 @@ function Navbar() {
   const navItem = [
     {
       navName: 'Home',
-      path: '/',
+      path: '/home',
       active: true,
     },
     {
@@ -51,7 +51,7 @@ function Navbar() {
 
   return (
     <nav>
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b px-4">
+      <header className="sticky top-0 flex h-16 items-center gap-4  px-4 ">
         <nav className="">
           <Link to={'/'}>
             <BlogAppLogo className="w-1" />
