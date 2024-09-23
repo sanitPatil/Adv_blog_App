@@ -1,5 +1,6 @@
 import { Client, Databases, ID, Query, Storage } from 'appwrite';
 import { config } from '../index';
+
 class StorageService {
   client = new Client();
   constructor() {
@@ -83,19 +84,15 @@ class StorageService {
   //----------------BLOG SERIVCES ------------------------------//
 
   // 1. create BLOG
-  async createBlog({
-    userId,
-    featuredImage,
-    isPublished,
-    category,
-    content,
-    title,
-  }) {
+  async createBlog(
+    slug,
+    { userId, featuredImage, isPublished, category, content, title }
+  ) {
     try {
       return await this.database.createDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        ID.unique(),
+        slug,
         { userId, featuredImage, isPublished, category, content, title }
       );
     } catch (error) {
@@ -104,12 +101,12 @@ class StorageService {
     }
   }
   // 2. get BLOG // universal call
-  async getBlog(id) {
+  async getBlog(slug) {
     try {
       return this.database.getDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        id
+        slug
       );
     } catch (error) {
       console.log('Appwrite serive :: get-blog:: error', error);
@@ -118,12 +115,12 @@ class StorageService {
   }
 
   //3. update BLOG
-  async updateBlog(id, { data }) {
+  async updateBlog(slug, { data }) {
     try {
       return this.database.updateDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        id,
+        slug,
         {
           ...data,
         }
@@ -135,12 +132,12 @@ class StorageService {
   }
 
   // 4. delete POST
-  async deleteBlog(id) {
+  async deleteBlog(slug) {
     try {
       return this.database.deleteDocument(
         config.appwrite_db,
         config.appwrite_blog,
-        id
+        slug
       );
     } catch (error) {
       console.log('Appwrite serive :: delete-blog :: error', error);

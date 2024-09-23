@@ -31,12 +31,52 @@ const AddPost = () => {
 
   // UPDATE BLOG METHOD
   const updatePost = async (data) => {
-    console.log(data);
+    setLoading(true);
+    setError('');
+    setEdit(false);
+    if (!data) {
+      setError('All fileds required!');
+      setLoading(false);
+      setEdit(true);
+      return;
+    }
+    let delImageRes = await storageService.deleteFile(blog?.featuredImage);
+    //const blogImage = await storageService.uploadFile(data?.blogPicture[0]);
+    if (!blogImage) {
+      setError('failed to uplaod blog Image!');
+      setLoading(false);
+      setEdit(true);
+      return;
+    }
+    const blogUplaod = await storageService.updateBlog(blog?.$id, {
+      userId: loginUser.$id,
+      featuredImage: blogImage.$id,
+      title: data?.slug,
+      isPublished: Boolean(data?.isPublished),
+      content: data?.content,
+      category: data?.category,
+    });
+    if (!blogUplaod) {
+      setError('failed to uplaod blog !');
+      setLoading(false);
+      setEdit(true);
+      return;
+    }
+    console.log(blogUplaod);
+
+    setError('');
+    setEdit(false);
+    setLoading(false);
+    reset();
+    alert('Blog Added successfully!');
+    navigate('/all-post');
   };
 
   // CREATE BLOG METHOD
 
   const addPost = async (data) => {
+    console.log('add post call');
+
     // console.log(data);
     // data.title = data.slug;
     // delete data['slug'];
@@ -62,7 +102,7 @@ const AddPost = () => {
       return;
     }
 
-    const blogUpload = await storageService.createBlog({
+    const blogUpload = await storageService.createBlog(data?.slug, {
       userId: loginUser.$id,
       featuredImage: blogImage.$id,
       title: data?.slug,
@@ -84,7 +124,7 @@ const AddPost = () => {
     setLoading(false);
     reset();
     alert('Blog Added successfully!');
-    navigate('/');
+    navigate('/all-post');
   };
 
   const clear = () => {
