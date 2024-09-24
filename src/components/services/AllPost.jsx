@@ -11,7 +11,10 @@ function AllPost() {
     (() => {
       storageService.getBlogList().then((res) => {
         if (res) {
+          console.log(res);
+
           setPostList(res.documents);
+          setBlogList(res.documents);
         }
       });
     })();
@@ -20,7 +23,11 @@ function AllPost() {
   return (
     <div className="w-full mt-10 flex flex-wrap mb-24 gap-6 justify-start">
       {postList &&
-        postList.map((blog) => <Card blog={blog} key={blog.title} />)}
+        postList.map((blog) => {
+          return blog.isPublished ? (
+            <Card blog={blog} key={blog.title} />
+          ) : null;
+        })}
     </div>
   );
 }

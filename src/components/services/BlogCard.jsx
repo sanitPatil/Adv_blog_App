@@ -55,7 +55,9 @@ function BlogCard() {
 
     alert('successfully deleted ');
   };
-  return (
+  return !url ? (
+    <LoadingSkeleton />
+  ) : (
     <div className=" bg-white rounded-lg shadow-lg ">
       {Error && <p>{Error}</p>}
 
@@ -120,14 +122,22 @@ function BlogCard() {
 
 export default BlogCard;
 
-{
-  /* <div className="m-10">
-<div className="ml-10 ">
-  <div className="h-[60vh]  flex  ">
-    
-  </div>
-
-  <div className="ml-20 w-full">{parse(blog.content)}</div>
-</div>
-</div> */
-}
+const LoadingSkeleton = () => {
+  return (
+    <div className="border absolute border-blue-300 shadow rounded-md p-4 bottom-[50vh] left-[15vh] w-10/12  mx-auto">
+      <div className="animate-pulse flex space-x-4 w-full h-full ">
+        <div className="rounded-full bg-slate-700 h-10 w-10 "></div>
+        <div className="flex-1 space-y-6 py-1 w-full h-full">
+          <div className="h-2 bg-slate-700 rounded w-full"></div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+              <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+            </div>
+            <div className="h-2 bg-slate-700 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -39,19 +39,19 @@ function Card({ blog }) {
     //     </div>
     //   )}
     // </div>
-    <div className="w-1/5">
+    <div className="w-1/5 h-full">
       {blog && (
         <div className="" key={blog.title}>
           <Link to={`/blog/${blog.$id}`}>
-            <div className="w-full rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-all delay-75">
+            <div className="w-full  h-[70vh] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-all delay-75">
               <img
                 className="w-full p-2 rounded-3xl"
                 src={url}
                 alt={blog.title}
               />
-              <div className="px-6 py-4">
+              <div className="px-4 py-4">
                 <div className="font-bold text-xl mb-2">{blog.title}</div>
-                <div className="text-gray-700 h-40 text-base">
+                <div className="text-gray-700 text-base">
                   {blog && parse(blog.content)}
                 </div>
               </div>

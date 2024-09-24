@@ -9,21 +9,18 @@ const AddPost = () => {
   const navigate = useNavigate();
   const category_options = ['technology', 'lifestyle', 'education', 'travel'];
   const { loginUser } = useLoginStore((state) => state);
-  // UPDATE BLOG METHOD
+
   const blogUpdateState = useLocation().state;
   let blog = '';
   if (blogUpdateState) {
     blog = blogUpdateState.blog;
   }
-  // console.log(blog);
 
   const { handleSubmit, register, control, watch, getValues, setValue, reset } =
     useForm({
       defaultValues: {
         content: blog?.content || '',
         title: blog?.title || '',
-        isPublished: blog?.isPublished || true,
-        category: blog?.category || 'travel',
       },
     });
 
@@ -34,21 +31,16 @@ const AddPost = () => {
   // CREATE BLOG METHOD
 
   const addPost = async (data) => {
-    // console.log(data);
-    // data.title = data.slug;
-    // delete data['slug'];
-    // console.log(data); to remove filed form object
-
+    setLoading(true);
+    console.log(data);
     if (!blog) {
       console.log('add-method call');
-
-      setLoading(false);
       setError('');
       setEdit(false);
 
       if (!data) {
-        setLoading(false);
         setError('All fields Are required!!!');
+        setLoading(false);
         setEdit(true);
         return;
       }
@@ -64,7 +56,7 @@ const AddPost = () => {
         userId: loginUser.$id,
         featuredImage: blogImage.$id,
         title: data?.slug,
-        isPublished: Boolean(data?.isPublished),
+        isPublished: data?.isPublished === 'true' ? true : false,
         content: data?.content,
         category: data?.category,
       });
@@ -75,20 +67,11 @@ const AddPost = () => {
         setEdit(true);
         return;
       }
-      //console.log(blogUpload);
-
-      setError('');
-      setEdit(false);
-      setLoading(false);
-      reset();
       alert('Blog Added successfully!');
-      navigate('/all-post');
-      return;
-      ////////////////////////////
+
+      //  UPDATE METHOD
     } else {
       console.log('update method call');
-
-      setLoading(false);
       setError('');
       setEdit(false);
 
@@ -112,14 +95,13 @@ const AddPost = () => {
         setEdit(true);
         return;
       }
-
       const res = await storageService.updateBlog(blog?.$id, {
         userId: blog?.userId,
         featuredImage: uploadRes?.$id,
         content: data?.content,
         title: data?.slug,
         category: data?.category,
-        isPublished: data?.isPublished,
+        isPublished: data?.isPublished === 'true' ? true : false,
       });
       if (!res) {
         setLoading(false);
@@ -128,12 +110,11 @@ const AddPost = () => {
         return;
       }
       alert('update successfully');
-      setLoading(false);
-      setError('');
-      setEdit(false);
-      navigate('/all-post');
-      return;
     }
+    setLoading(false);
+    setError('');
+    setEdit(false);
+    navigate('/all-post');
   };
 
   const clear = () => {
@@ -161,7 +142,7 @@ const AddPost = () => {
   return (
     <div className="w-full p-2 max-h-screen">
       {loading ? (
-        <LodingSkeleton />
+        <LoadingSkeleton />
       ) : (
         <form onSubmit={handleSubmit(addPost)}>
           <div className="grid grid-cols-5 gap-8 w-full p-2">
@@ -268,6 +249,14 @@ const AddPost = () => {
                       <LoaderCircleIcon className="animate-spin w-full" />
                     )}
                   </button>
+                  {blog && (
+                    <button
+                      className={`p-2 m-2 text-white bg-black rounded-full w-28 text-center font-semibold`}
+                      onClick={() => navigate(`/blog/${blog.$id}`)}
+                    >
+                      back
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -279,8 +268,7 @@ const AddPost = () => {
 };
 
 export default AddPost;
-
-const LodingSkeleton = () => {
+const LoadingSkeleton = () => {
   return (
     <div className="border absolute border-blue-300 shadow rounded-md p-4 bottom-[50vh] left-[15vh] w-10/12  mx-auto">
       <div className="animate-pulse flex space-x-4 w-full h-full ">

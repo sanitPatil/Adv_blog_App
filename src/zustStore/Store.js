@@ -30,14 +30,19 @@ const profileStore = create()(
 );
 
 const BlogListStore = create()(
-  persist((set) => ({
-    blogList: null,
-    setBlogList: (data) => set(() => ({ blogList: data })),
-    clearBlogList: () =>
-      set(() => ({
-        blogList: null,
-      })),
-  }))
+  persist(
+    (set) => ({
+      blogList: null,
+      setBlogList: (data) => set(() => ({ blogList: data })),
+      clearBlogList: () =>
+        set(() => ({
+          blogList: null,
+        })),
+    }),
+    {
+      name: 'blogs',
+    }
+  )
 );
 export const useLoginStore = loginStore;
 export const useProfileStore = profileStore;
