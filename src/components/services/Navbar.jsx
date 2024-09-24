@@ -113,10 +113,50 @@ function Navbar() {
             </button>
 
             {/* Dropdown Menu */}
-            <div
+            {/* <div
               className={` text-center
               hidden
               absolute right-0 top-9 group-hover:block mt-1 w-32 bg-white  border-gray-300 rounded-lg shadow-lg`}
+            >
+              <ul className="rounded-lg bg-slate-50">
+                <li>
+                  <Link
+                    to={'/account-setting'}
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  >
+                    Account
+                  </Link>
+                </li>
+                {loginStatus && (
+                  <li>
+                    <Link
+                      to={'/account-setting/stats'}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                    >
+                      Dashboard
+                    </Link>
+                  </li>
+                )}
+                {loginStatus && (
+                  <li className="mt-2">
+                    <button
+                      onClick={logout}
+                      className="block px-4 py-2 text-white bg-black rounded hover:bg-red-900 w-full"
+                    >
+                      {logOutLoading ? (
+                        <LoaderCircleIcon className="animate-spin w-full text-center" />
+                      ) : (
+                        'Logout'
+                      )}
+                    </button>
+                  </li>
+                )}
+              </ul>
+            </div> */}
+            <div
+              className={`text-center
+  opacity-0 pointer-events-none
+  absolute right-0 top-9 group-hover:opacity-100 group-hover:pointer-events-auto mt-1 w-32 bg-white border-gray-300 rounded-lg shadow-lg transition-opacity duration-300`}
             >
               <ul className="rounded-lg bg-slate-50">
                 <li>

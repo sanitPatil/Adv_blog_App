@@ -105,12 +105,7 @@ class StorageService {
         config.appwrite_db,
         config.appwrite_blog,
         ID.unique(),
-        { userId, featuredImage, isPublished, category, content, title },
-        [
-          Permission.read(Role.users()), // All authenticated users can read the document
-          Permission.update(Role.user(userId)), // Only the creator can update
-          Permission.delete(Role.user(userId)), // Only the creator can delete
-        ]
+        { userId, featuredImage, isPublished, category, content, title }
       );
     } catch (error) {
       console.log('Appwrite serive :: create-blog :: error', error);
@@ -132,15 +127,16 @@ class StorageService {
   }
 
   //3. update BLOG
-  async updateBlog(id, { data }) {
+  async updateBlog(
+    id,
+    { userId, featuredImage, isPublished, category, content, title }
+  ) {
     try {
       return this.database.updateDocument(
         config.appwrite_db,
         config.appwrite_blog,
         id,
-        {
-          ...data,
-        }
+        { userId, featuredImage, isPublished, category, content, title }
       );
     } catch (error) {
       console.log('Appwrite serive :: update-blog :: error', error);
