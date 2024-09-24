@@ -4,18 +4,26 @@ import { Controller, useForm } from 'react-hook-form';
 import { storageService } from '../../index';
 import { useLoginStore } from '../../zustStore/Store';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LoaderCircleIcon } from 'lucide-react';
 const AddPost = () => {
   const navigate = useNavigate();
   const category_options = ['technology', 'lifestyle', 'education', 'travel'];
   const { loginUser } = useLoginStore((state) => state);
+  // UPDATE BLOG METHOD
+  const blogUpdateState = useLocation().state;
+  let blog = '';
+  if (blogUpdateState) {
+    blog = blogUpdateState.blog;
+  }
+  // console.log(blog);
 
   const { handleSubmit, register, control, watch, getValues, setValue, reset } =
     useForm({
       defaultValues: {
-        content: '',
-        title: '',
-        isPublished: true,
-        category: 'travel',
+        content: blog?.content || '',
+        title: blog?.title || '',
+        isPublished: blog?.isPublished || true,
+        category: blog?.category || 'travel',
       },
     });
 
@@ -23,61 +31,109 @@ const AddPost = () => {
   const [Error, setError] = useState('');
   const [Edit, setEdit] = useState(false);
 
-  // UPDATE BLOG METHOD
-
   // CREATE BLOG METHOD
 
   const addPost = async (data) => {
-    console.log('add post call');
-
     // console.log(data);
     // data.title = data.slug;
     // delete data['slug'];
     // console.log(data); to remove filed form object
-    setLoading(false);
-    setError('');
-    setEdit(false);
 
-    if (!data) {
+    if (!blog) {
+      console.log('add-method call');
+
       setLoading(false);
-      setError('All fields Are required!!!');
-      setEdit(true);
+      setError('');
+      setEdit(false);
+
+      if (!data) {
+        setLoading(false);
+        setError('All fields Are required!!!');
+        setEdit(true);
+        return;
+      }
+      const blogImage = await storageService.uploadFile(data?.blogPicture[0]);
+      if (!blogImage) {
+        setError('failed to uplaod blog Image!');
+        setLoading(false);
+        setEdit(true);
+        return;
+      }
+
+      const blogUpload = await storageService.createBlog({
+        userId: loginUser.$id,
+        featuredImage: blogImage.$id,
+        title: data?.slug,
+        isPublished: Boolean(data?.isPublished),
+        content: data?.content,
+        category: data?.category,
+      });
+
+      if (!blogUpload) {
+        setError('failed to uplaod blog !');
+        setLoading(false);
+        setEdit(true);
+        return;
+      }
+      //console.log(blogUpload);
+
+      setError('');
+      setEdit(false);
+      setLoading(false);
+      reset();
+      alert('Blog Added successfully!');
+      navigate('/all-post');
+      return;
+      ////////////////////////////
+    } else {
+      console.log('update method call');
+
+      setLoading(false);
+      setError('');
+      setEdit(false);
+
+      if (!data) {
+        setLoading(false);
+        setError('All fields Are required!!!');
+        setEdit(true);
+        return;
+      }
+      const delRes = await storageService.deleteFile(blog?.featuredImage);
+      if (!delRes) {
+        setLoading(false);
+        setError('Failed to delete Asset!!!');
+        setEdit(true);
+        return;
+      }
+      const uploadRes = await storageService.uploadFile(data?.blogPicture[0]);
+      if (!uploadRes) {
+        setLoading(false);
+        setError('failed to upload Res!!!');
+        setEdit(true);
+        return;
+      }
+
+      const res = await storageService.updateBlog(blog?.$id, {
+        userId: blog?.userId,
+        featuredImage: uploadRes?.$id,
+        content: data?.content,
+        title: data?.slug,
+        category: data?.category,
+        isPublished: data?.isPublished,
+      });
+      if (!res) {
+        setLoading(false);
+        setError('failed to update blog!!!');
+        setEdit(true);
+        return;
+      }
+      alert('update successfully');
+      setLoading(false);
+      setError('');
+      setEdit(false);
+      navigate('/all-post');
       return;
     }
-    // console.log(data);
-    // data.isPublished = Boolean(data.isPublished);
-    // console.log(data);
-    const blogImage = await storageService.uploadFile(data?.blogPicture[0]);
-    if (!blogImage) {
-      setError('failed to uplaod blog Image!');
-      setLoading(false);
-      setEdit(true);
-      return;
-    }
-
-    const blogUpload = await storageService.createBlog({
-      userId: loginUser.$id,
-      featuredImage: blogImage.$id,
-      title: data?.slug,
-      isPublished: Boolean(data?.isPublished),
-      content: data?.content,
-      category: data?.category,
-    });
-
-    if (!blogUpload) {
-      setError('failed to uplaod blog !');
-      setLoading(false);
-      setEdit(true);
-      return;
-    }
-    console.log(blogUpload);
-
-    setError('');
-    setEdit(false);
-    setLoading(false);
-    reset();
-    alert('Blog Added successfully!');
-    navigate('/all-post');
   };
 
   const clear = () => {
@@ -200,9 +256,17 @@ const AddPost = () => {
                   </button>
                   <button
                     type="submit"
-                    className="p-2 m-2 text-white bg-black rounded-full w-24 text-center font-semibold"
+                    className="p-2 m-2 text-white bg-black rounded-full w-28 text-center font-semibold"
                   >
-                    save
+                    {!loading ? (
+                      !blog ? (
+                        'Save'
+                      ) : (
+                        'Update'
+                      )
+                    ) : (
+                      <LoaderCircleIcon className="animate-spin w-full" />
+                    )}
                   </button>
                 </div>
               </div>

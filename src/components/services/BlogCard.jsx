@@ -16,7 +16,7 @@ function BlogCard() {
   const [Error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { blogId } = useParams();
-  //console.log(blog);
+  // console.log(blog);
   const navigate = useNavigate();
   useEffect(() => {
     if (blogId) {
@@ -58,6 +58,7 @@ function BlogCard() {
   return (
     <div className=" bg-white rounded-lg shadow-lg ">
       {Error && <p>{Error}</p>}
+
       <div className="w-full  text-center justify-center flex">
         <img
           src={url}
@@ -65,49 +66,52 @@ function BlogCard() {
           className="w-[70%] object-cover h-[80vh] rounded-lg hover:scale-110 transition delay-200"
         />
       </div>
-      <div className="p-6 ml-24">
-        <div className="ml-10">
-          <div className="text-3xl font-bold text-gray-800 capitalize">
-            {blog.title}
+      <div className="p-6 ml-20  w-10/12">
+        <div className="">
+          <div className="flex justify-between ">
+            <div className="text-3xl font-bold ml-4 underline underline-offset-4 text-gray-800 capitalize">
+              {blog.title}
+            </div>
+            <div className="bg-gray-200 text-gray-800 text-bold m-2 mr-20 p-2 rounded-full">
+              {'#' + blog.category}
+            </div>
           </div>
-
           {blog?.content && (
-            <div className="text-gray-600 mb-4 text-xl m-2">
+            <div className="text-gray-600 mb-4 italic p-2 border-b-2 text-xl m-1">
               {parse(blog.content)}
             </div>
           )}
 
           <div className="flex w-full  items-center">
-            <img
-              src={url}
-              alt="Author avatar"
-              className="w-20 h-20 rounded-full mr-4"
-            />
-            <div className="text-sm">
-              <p className="text-gray-800 font-semibold ">John Doe</p>
-              <p className="text-gray-500">Sept 23, 2024</p>
+            <div className="text-sm m-4 rounded-full  text-center p-2">
+              <p className="text-gray-800 w-full font-semibold ">John Doe</p>
+              {blog?.$createdAt && (
+                <p className="text-gray-500 w-20 ">
+                  {blog.$createdAt.substr(0, 7)}
+                </p>
+              )}
             </div>
+            {isAuthor && (
+              <div className="w-full flex justify-end  m-2 ">
+                <button
+                  onClick={() => navigate('/add-post', { state: { blog } })}
+                  className="w-28 border p-2  text-white bg-black rounded-lg "
+                >
+                  Edit Blog
+                </button>
+                <button
+                  onClick={() => deletePost(blog)}
+                  className="w-28 ml-2 border p-2  text-white bg-black text-center rounded-lg "
+                >
+                  {loading ? (
+                    <LoaderCircle className="animate-spin w-full" />
+                  ) : (
+                    'Delete Blog'
+                  )}
+                </button>
+              </div>
+            )}
           </div>
-          {isAuthor && (
-            <div className="w-full  m-2 ">
-              <button
-                // onClick={() => navigate('/add-post', { state: { blog } })}
-                className="w-28 border p-2  text-white bg-black rounded-lg "
-              >
-                Edit Blog
-              </button>
-              <button
-                onClick={() => deletePost(blog)}
-                className="w-28 ml-2 border p-2  text-white bg-black text-center rounded-lg "
-              >
-                {loading ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  'Delete Blog'
-                )}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>

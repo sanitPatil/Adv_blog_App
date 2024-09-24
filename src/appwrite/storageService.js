@@ -1,4 +1,12 @@
-import { Client, Databases, ID, Query, Storage } from 'appwrite';
+import {
+  Client,
+  Databases,
+  ID,
+  Permission,
+  Query,
+  Role,
+  Storage,
+} from 'appwrite';
 import { config } from '../index';
 
 class StorageService {
@@ -97,7 +105,12 @@ class StorageService {
         config.appwrite_db,
         config.appwrite_blog,
         ID.unique(),
-        { userId, featuredImage, isPublished, category, content, title }
+        { userId, featuredImage, isPublished, category, content, title },
+        [
+          Permission.read(Role.users()), // All authenticated users can read the document
+          Permission.update(Role.user(userId)), // Only the creator can update
+          Permission.delete(Role.user(userId)), // Only the creator can delete
+        ]
       );
     } catch (error) {
       console.log('Appwrite serive :: create-blog :: error', error);
