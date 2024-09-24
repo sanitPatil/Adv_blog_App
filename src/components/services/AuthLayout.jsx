@@ -11,6 +11,8 @@ function AuthLayout({ children, authenticate = true }) {
     setLoading(true);
     if (authenticate && loginStatus !== authenticate) {
       navigate('/login');
+    } else if (!authenticate && loginStatus !== authenticate) {
+      navigate('/');
     }
     setLoading(false);
   }, [loginStatus, navigate, authenticate]);

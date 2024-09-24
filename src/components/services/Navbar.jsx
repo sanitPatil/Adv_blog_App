@@ -1,4 +1,4 @@
-import { LoaderCircleIcon, UserRoundCog } from 'lucide-react';
+import { LoaderCircleIcon, Moon, Sun, UserRoundCog } from 'lucide-react';
 import { BlogAppLogo } from '../../index';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -6,13 +6,16 @@ import {
   useBlogListStore,
   useLoginStore,
   useProfileStore,
+  useTheme,
 } from '../../zustStore/Store';
 import { authService } from '../../index';
 function Navbar() {
   const { loginStatus, logOutState } = useLoginStore((state) => state);
+  const { darkTheme } = useTheme((state) => state);
   const [logOutLoading] = useState(false);
   const { clearProfileData } = useProfileStore((state) => state);
   const { clearBlogList } = useBlogListStore((state) => state);
+  const { switchTheme } = useTheme((state) => state);
   const logout = async () => {
     await authService.LogOut();
     logOutState();
@@ -149,6 +152,11 @@ function Navbar() {
                 )}
               </ul>
             </div>
+          </div>
+          <div className="ml-2 border rounded-full">
+            <button onClick={() => switchTheme()} className="p-2 rounded-full">
+              {darkTheme ? <Moon /> : <Sun className="text-yellow-500 " />}
+            </button>
           </div>
         </main>
       </header>

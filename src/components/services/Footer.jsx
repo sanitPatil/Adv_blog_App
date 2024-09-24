@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <p className="">
+    <p className="text-white font-bold">
       &copy; <span id="year"></span> Your Blog Name. All rights reserved.
     </p>
   );

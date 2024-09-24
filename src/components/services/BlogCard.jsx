@@ -56,7 +56,7 @@ function BlogCard() {
   return !url ? (
     <LoadingSkeleton />
   ) : (
-    <div className=" bg-white rounded-lg shadow-lg ">
+    <div className=" rounded-lg shadow-lg ">
       {Error && <p>{Error}</p>}
 
       <div className="w-full  text-center justify-center flex">
@@ -69,15 +69,15 @@ function BlogCard() {
       <div className="p-6 ml-20  w-10/12">
         <div className="">
           <div className="flex justify-between ">
-            <div className="text-3xl font-bold ml-4 underline underline-offset-4 text-gray-800 capitalize">
+            <div className="text-3xl font-bold ml-4 underline underline-offset-4  capitalize">
               {blog.title}
             </div>
-            <div className="bg-gray-200 text-gray-800 text-bold m-2 mr-20 p-2 rounded-full">
+            <div className=" text-gray-800 text-bold m-2 mr-20 p-2 rounded-full">
               {'#' + blog.category}
             </div>
           </div>
           {blog?.content && (
-            <div className="text-gray-600 mb-4 italic p-2 border-b-2 text-xl m-1">
+            <div className=" mb-4 italic p-2 text-black dark:bg-white border-b-2 text-xl m-1">
               {parse(blog.content)}
             </div>
           )}

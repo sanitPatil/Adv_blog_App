@@ -44,6 +44,20 @@ const BlogListStore = create()(
     }
   )
 );
+
+const themeStore = create()(
+  persist(
+    (set) => ({
+      darkTheme: false,
+      switchTheme: () => set((state) => ({ darkTheme: !state.darkTheme })),
+    }),
+    {
+      name: 'Theme_Mode',
+    }
+  )
+);
+
 export const useLoginStore = loginStore;
 export const useProfileStore = profileStore;
 export const useBlogListStore = BlogListStore;
+export const useTheme = themeStore;

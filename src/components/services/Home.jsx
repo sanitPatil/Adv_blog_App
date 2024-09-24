@@ -5,7 +5,7 @@ function Home() {
     <div>
       <img
         src={'public/image.png'}
-        className="w-full h-full object-cover border"
+        className="w-full h-full object-cover"
         alt="backgroundHome Image"
       />
       <div className="absolute text-white ml-20 top-[50%]">
