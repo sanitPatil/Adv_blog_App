@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { storageService } from '../../index';
 import parse from 'html-react-parser';
@@ -8,15 +8,13 @@ function BlogCard() {
   const [blog, setBlog] = useState({});
   const [url, setUrl] = useState('');
   const { loginUser } = useLoginStore((state) => state);
-  // console.log('loginUser', loginUser);
-  // console.log('blog', blog);
 
   const isAuthor = loginUser && blog ? loginUser?.$id === blog?.userId : false;
-  //console.log('isAuthor', isAuthor);
+
   const [Error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { blogId } = useParams();
-  // console.log(blog);
+
   const navigate = useNavigate();
   useEffect(() => {
     if (blogId) {
@@ -32,7 +30,7 @@ function BlogCard() {
       });
     }
   }, []);
-  //console.log(blogId);
+
   const deletePost = async (blog) => {
     setLoading(true);
     setError('');

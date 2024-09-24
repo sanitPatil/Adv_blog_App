@@ -1,18 +1,14 @@
 import { useEffect } from 'react';
-import { authService, config, Footer, Navbar, storageService } from './index';
-import { useLoginStore, useProfileStore } from './zustStore/Store';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { authService, Footer, Navbar } from './index';
+import { useLoginStore } from './zustStore/Store';
+import { Outlet } from 'react-router-dom';
 function App() {
-  const navigate = useNavigate();
-  const { loginStatus, LoginUser, loginState, logOutState } = useLoginStore(
-    (state) => state
-  );
-  const { setProfileData, clearProfileData } = useProfileStore(
-    (state) => state
-  );
+  const { loginState } = useLoginStore((state) => state);
+
   useEffect(() => {
     (async () => {
       const loginRes = await authService.getCurrentLogin();
+      loginState(loginRes);
     })();
   }, []);
   return (

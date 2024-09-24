@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import RTE from './RTE';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { storageService } from '../../index';
 import { useLoginStore } from '../../zustStore/Store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LoaderCircleIcon } from 'lucide-react';
+
 const AddPost = () => {
   const navigate = useNavigate();
   const category_options = ['technology', 'lifestyle', 'education', 'travel'];
@@ -16,19 +17,25 @@ const AddPost = () => {
     blog = blogUpdateState.blog;
   }
 
-  const { handleSubmit, register, control, watch, getValues, setValue, reset } =
-    useForm({
-      defaultValues: {
-        content: blog?.content || '',
-        title: blog?.title || '',
-      },
-    });
+  const {
+    handleSubmit,
+    register,
+    control,
+    watch,
+    getValues,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      content: blog?.content || '',
+      title: blog?.title || '',
+    },
+  });
 
   const [loading, setLoading] = useState(false);
   const [Error, setError] = useState('');
   const [Edit, setEdit] = useState(false);
-
-  // CREATE BLOG METHOD
 
   const addPost = async (data) => {
     setLoading(true);
@@ -68,8 +75,6 @@ const AddPost = () => {
         return;
       }
       alert('Blog Added successfully!');
-
-      //  UPDATE METHOD
     } else {
       console.log('update method call');
       setError('');
@@ -158,6 +163,9 @@ const AddPost = () => {
                     name="content"
                     defaultValue={getValues('content')}
                   />
+                  {errors && (
+                    <p className="text-red-800">{errors?.content?.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -171,9 +179,18 @@ const AddPost = () => {
                   disabled={true}
                   className="italic bg-slate-50 font-semibold w-full pb-2 block pr-2 min-h-24"
                 ></textarea>
+                {errors && (
+                  <p className="text-red-800">{errors?.slug?.message}</p>
+                )}
                 <input
+                  required
                   {...register('title', {
                     required: true,
+                    pattern: {
+                      value: /^[A-Za-z]+[A-Za-z0-9\s]*$/,
+                      message:
+                        'statring must be with string and then number!!!',
+                    },
                   })}
                   type="text"
                   placeholder="title of blog "
@@ -184,13 +201,20 @@ const AddPost = () => {
                     });
                   }}
                 />
+                {errors && (
+                  <p className="text-red-800">{errors?.title?.message}</p>
+                )}
               </div>
               {/* title */}
               <div className="w-full  text-center">
                 <div className="w-full m-2 text-center ">
                   <input
+                    required
                     {...register('blogPicture', {
-                      required: true,
+                      required: {
+                        value: true,
+                        message: 'pease select an image',
+                      },
                     })}
                     label="choose Profile"
                     className={`block p-4 text-sm text-slate-500
@@ -202,20 +226,36 @@ const AddPost = () => {
                                `}
                     type="file"
                   />
+                  {errors && (
+                    <p className="text-red-800">
+                      {errors?.blogPicture?.message}
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-center gap-4 m-2 w-full text-purple-800 font-semibold text-xl  p-2 mt-4">
                   <select
                     {...register('isPublished', {
-                      required: true,
+                      required: {
+                        value: true,
+                        message: 'value is not selected',
+                      },
                     })}
                     className=" w-[40%] rounded-full text-center border border-purple-700 bg-slate-50"
                   >
                     <option value={true}>published</option>
                     <option value={false}>save draft</option>
                   </select>
+                  {errors && (
+                    <p className="text-red-800">
+                      {errors?.isPublished?.message}
+                    </p>
+                  )}
                   <select
                     {...register('category', {
-                      required: true,
+                      required: {
+                        value: true,
+                        message: 'choose category',
+                      },
                     })}
                     className="w-[40%] rounded-full text-center border border-purple-700 bg-slate-50 "
                   >
@@ -226,6 +266,9 @@ const AddPost = () => {
                         </option>
                       ))}
                   </select>
+                  {errors && (
+                    <p className="text-red-800">{errors?.category?.message}</p>
+                  )}
                 </div>
 
                 <div className="bo m-2 p-2 text-center">

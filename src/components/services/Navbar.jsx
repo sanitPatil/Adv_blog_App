@@ -1,10 +1,6 @@
-import {
-  LoaderCircleIcon,
-  SeparatorHorizontal,
-  UserRoundCog,
-} from 'lucide-react';
+import { LoaderCircleIcon, UserRoundCog } from 'lucide-react';
 import { BlogAppLogo } from '../../index';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   useBlogListStore,
@@ -12,8 +8,6 @@ import {
   useProfileStore,
 } from '../../zustStore/Store';
 import { authService } from '../../index';
-// all post , stats , category wise search, search, home, add-post
-
 function Navbar() {
   const { loginStatus, logOutState } = useLoginStore((state) => state);
   const [logOutLoading] = useState(false);
@@ -111,52 +105,10 @@ function Navbar() {
         </nav>
         <main className="flex justify-between p-4">
           <div className="relative group">
-            {/* Button */}
             <button className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition">
               <UserRoundCog className="text-gray-700" />
             </button>
 
-            {/* Dropdown Menu */}
-            {/* <div
-              className={` text-center
-              hidden
-              absolute right-0 top-9 group-hover:block mt-1 w-32 bg-white  border-gray-300 rounded-lg shadow-lg`}
-            >
-              <ul className="rounded-lg bg-slate-50">
-                <li>
-                  <Link
-                    to={'/account-setting'}
-                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                  >
-                    Account
-                  </Link>
-                </li>
-                {loginStatus && (
-                  <li>
-                    <Link
-                      to={'/account-setting/stats'}
-                      className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                    >
-                      Dashboard
-                    </Link>
-                  </li>
-                )}
-                {loginStatus && (
-                  <li className="mt-2">
-                    <button
-                      onClick={logout}
-                      className="block px-4 py-2 text-white bg-black rounded hover:bg-red-900 w-full"
-                    >
-                      {logOutLoading ? (
-                        <LoaderCircleIcon className="animate-spin w-full text-center" />
-                      ) : (
-                        'Logout'
-                      )}
-                    </button>
-                  </li>
-                )}
-              </ul>
-            </div> */}
             <div
               className={`text-center
   opacity-0 pointer-events-none

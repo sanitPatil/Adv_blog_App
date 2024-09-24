@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { storageService } from '../../index';
 import { useBlogListStore } from '../../zustStore/Store';
 
 import Card from './Card';
 function AllPost() {
-  const { setBlogList, blogList } = useBlogListStore((state) => state);
+  const { setBlogList } = useBlogListStore((state) => state);
   const [postList, setPostList] = useState([]);
   useEffect(() => {
     (() => {

@@ -73,7 +73,7 @@ export default UserProfile;
 // ***********************************************************************************
 const PersonalUpdate = () => {
   const { loginUser } = useLoginStore((state) => state);
-  const { setProfileData } = useProfileStore((state) => state);
+
   const [edit, setEdit] = useState(false);
   const { profileData } = useProfileStore((state) => state);
   const [error, setError] = useState('');
@@ -103,12 +103,10 @@ const PersonalUpdate = () => {
   const userProfileData = async (data) => {
     setError('');
     setLoading(true);
-    // console.log(data);
+
     const fileId = profileData?.profilePicture;
-    //console.log(fileId);
 
     const file = data?.profilePicture[0];
-    //console.log(filePath);
 
     if (file) {
       const uploadRes = await storageService.fileUpdate(file);
@@ -117,11 +115,11 @@ const PersonalUpdate = () => {
         setLoading(false);
         return;
       }
-      data.profilePicture = uploadRes.$id; //if your has given new profile picture
+      data.profilePicture = uploadRes.$id;
 
       await storageService.deleteFile(fileId);
     } else {
-      data.profilePicture = fileId; // this for if user has not given profile picture
+      data.profilePicture = fileId;
     }
     data.userId = profileData?.userId;
 
@@ -262,7 +260,6 @@ const Security = () => {
   const updateEmail = async (data) => {
     setError('');
     setLoading(true);
-    //console.log(data);
 
     if (!data) {
       setError('All fileds Are required!');
@@ -324,7 +321,6 @@ const Security = () => {
             </button>
           </div>
         </form>
-        {/* {new form} */}
         <UpdatePassword />
       </div>
     </>
@@ -334,7 +330,6 @@ const Security = () => {
 /*************************************************************************** */
 const UpdatePassword = () => {
   const [edit, setEdit] = useState(false);
-  const { loginUser } = useLoginStore((state) => state);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 

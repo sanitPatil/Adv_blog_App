@@ -7,7 +7,6 @@ import {
   AddPost,
   Home,
   AllPost,
-  Card,
   BlogCard,
 } from '..';
 import App from '../App';

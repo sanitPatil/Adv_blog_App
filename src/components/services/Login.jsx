@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { authService, Container, storageService } from '../../index';
+import { authService, Container } from '../../index';
 import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
 import { Loader } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useLoginStore, useProfileStore } from '../../zustStore/Store';
+import { useLoginStore } from '../../zustStore/Store';
 function Login() {
   const { loginState, logOutState } = useLoginStore((state) => state);
-  const { setProfileData, clearProfileData } = useProfileStore(
-    (state) => state
-  );
   const [error, setError] = React.useState('');
   const [loading, setLoaidng] = useState(false);
   const navigate = useNavigate();
   const linkEmail = useLocation().state;
-
   const {
     register,
     handleSubmit,
@@ -49,9 +45,6 @@ function Login() {
       return;
     }
     loginState(currentUser);
-    // console.log(currentUser);
-
-    // console.log(currentUser.$id);
 
     setLoaidng(false);
     navigate('/');

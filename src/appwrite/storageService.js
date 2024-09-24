@@ -1,12 +1,4 @@
-import {
-  Client,
-  Databases,
-  ID,
-  Permission,
-  Query,
-  Role,
-  Storage,
-} from 'appwrite';
+import { Client, Databases, ID, Query, Storage } from 'appwrite';
 import { config } from '../index';
 
 class StorageService {
@@ -20,10 +12,10 @@ class StorageService {
     this.bucket = new Storage(this.client);
   }
 
-  // user service
-  // 1. set USER PROFILE
+  //  *******************************************************************************
+  //  *****************************USER-PROFILE**************************************
+
   async setUserProfile(data) {
-    //console.log(data);
     if (!data) return 'data is emplty';
     try {
       const res = await this.database.createDocument(
@@ -39,25 +31,18 @@ class StorageService {
     }
   }
 
-  // user service
-  // 2. get USER PROFILE
   async getUserProfile(userId) {
-    //console.log(typeof userId);
     try {
       const res = await this.database.listDocuments(
         config.appwrite_db,
         config.appwrite_user,
-        [Query.equal('userId', [`${userId}`])] // put this in array
+        [Query.equal('userId', [`${userId}`])]
       );
-      //console.log(res);
       return res;
     } catch (error) {
       console.log('Appwrite serive :: get-user-profile :: error', error);
     }
   }
-
-  // user service
-  // 3. delete USER PROFILE
 
   async delUserProfile(id) {
     try {
@@ -71,8 +56,6 @@ class StorageService {
     }
   }
 
-  // user service
-  // 4. update USER PROFILE
   async updateUserProfile(id, data) {
     try {
       return this.database.updateDocument(
@@ -89,9 +72,9 @@ class StorageService {
     }
   }
 
-  //----------------BLOG SERIVCES ------------------------------//
+  //  *******************************************************************************
+  //  *************************************BLOG**************************************
 
-  // 1. create BLOG
   async createBlog({
     userId,
     featuredImage,
@@ -112,7 +95,7 @@ class StorageService {
       return false;
     }
   }
-  // 2. get BLOG // universal call
+
   async getBlog(id) {
     try {
       return this.database.getDocument(
@@ -126,7 +109,6 @@ class StorageService {
     }
   }
 
-  //3. update BLOG
   async updateBlog(
     id,
     { userId, featuredImage, isPublished, category, content, title }
@@ -144,7 +126,6 @@ class StorageService {
     }
   }
 
-  // 4. delete POST
   async deleteBlog(id) {
     try {
       return this.database.deleteDocument(
@@ -157,8 +138,6 @@ class StorageService {
       return false;
     }
   }
-
-  // get all blog post
   async getBlogList() {
     try {
       return await this.database.listDocuments(
@@ -171,7 +150,6 @@ class StorageService {
     }
   }
 
-  // get post category wise
   async getBlogListCategaryWise(category) {
     try {
       return await this.database.listDocuments(
@@ -200,8 +178,10 @@ class StorageService {
       return false;
     }
   }
-  // bucket
-  //1. create file
+
+  //  *******************************************************************************
+  //  *****************************FILE-MANAGEMENT**************************************
+
   async uploadFile(file) {
     if (!file) {
       return false;
@@ -254,12 +234,7 @@ class StorageService {
   }
 
   async previewFile(fileId) {
-    //console.log(fileId);
-
     try {
-      //return this.bucket.getFilePreview(config.appwrite_bucket, fileId);
-      // console.log(fileId);
-
       const res = this.bucket.getFilePreview(config.appwrite_bucket, fileId);
       return res;
     } catch (error) {
@@ -267,17 +242,6 @@ class StorageService {
       return false;
     }
   }
-
-  // checking username exists or not
 }
-
-// advance
-// comments , like,
-
-// dashboard, analytics
-// admin panel
-
-// bucket
-//1. create file
 const storageService = new StorageService();
 export default storageService;

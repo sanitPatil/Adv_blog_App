@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { authService, Container, storageService } from '../../index';
+import { authService, storageService } from '../../index';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
-import { Loader, LoaderCircle, User2Icon } from 'lucide-react';
+import { LoaderCircle, User2Icon } from 'lucide-react';
 import { useLoginStore, useProfileStore } from '../../zustStore/Store';
 
 function Register() {
-  const { loginState, logOutState } = useLoginStore((state) => state);
+  const { loginState } = useLoginStore((state) => state);
   const [profile, setProfile] = useState(false);
-  const navigate = useNavigate();
   const {
     handleSubmit,
     register,
@@ -36,15 +35,6 @@ function Register() {
       setLoading(false);
       return;
     }
-    // authService.getCurrentLogin().then((userData) => {
-    //   if (userData) {
-    //     loginState(userData);
-    //   } else {
-    //     setError('Regitration Error. failed get Data');
-    //     setLoading(false);
-    //     logOutState();
-    //   }
-    // });
     const currentLogin = await authService.getCurrentLogin();
     if (!currentLogin) {
       setError('failed to get current login');
@@ -185,9 +175,7 @@ export const CreateProfile = () => {
   const [error, setError] = useState('');
   const { handleSubmit, register, reset } = useForm();
   const { loginUser } = useLoginStore((state) => state);
-  const { setProfileData, clearProfileData } = useProfileStore(
-    (state) => state
-  );
+  const { setProfileData } = useProfileStore((state) => state);
   const completeUserProfile = async (data) => {
     setLoading(true);
     setError('');
