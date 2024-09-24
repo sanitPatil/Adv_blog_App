@@ -32,12 +32,14 @@ function UserProfile() {
 
   return (
     <main className="grid grid-cols-[20%_80%]  max-h-screen ">
-      <div className="h-[85vh] w-full text-white bg-neutral-950">
-        <div className="w-full">
-          <h1 className="text-center text-3xl pt-10 pb-4 font-bold">Setting</h1>
+      <div className="h-[85vh] w-full  bg-gray-95 0">
+        <div className="w-full ">
+          <h1 className="text-center text-3xl dark:text-white pt-10 pb-4 font-bold">
+            Setting
+          </h1>
         </div>
-        <div className="">
-          <nav className="grid text-center w-full">
+        <div className="dark:text-white  ">
+          <nav className="grid text-center  w-full">
             <ul className=" w-full">
               {navItem &&
                 navItem.map((item, index) => (
@@ -141,7 +143,7 @@ const PersonalUpdate = () => {
     <div>
       {error && <p className="text-red-700 text-center">{error}</p>}
       <form onSubmit={handleSubmit(userProfileData)}>
-        <div className="border">
+        <div className="">
           <div className=" w-full h-full">
             <h1 className="text-center text-3xl font-semibold mt-4">
               User Profile Details
@@ -175,7 +177,9 @@ const PersonalUpdate = () => {
                     {...register('name')}
                     disabled={true}
                     type="text"
-                    className={`w-[70%]  rounded p-2  ${edit ? 'border' : ''}`}
+                    className={`w-[70%] dark:text-black rounded p-2  ${
+                      edit ? 'border' : ''
+                    }`}
                   />
                 </div>
                 <div className="flex justify-between p-1 m-2">
@@ -186,7 +190,9 @@ const PersonalUpdate = () => {
                     {...register('username')}
                     disabled={!edit}
                     type="text"
-                    className={`w-[70%]  rounded p-2  ${edit ? 'border' : ''}`}
+                    className={`w-[70%] dark:text-black  rounded p-2  ${
+                      edit ? 'border' : ''
+                    }`}
                   />
                 </div>
                 <div className="flex justify-between p-1 m-2">
@@ -197,7 +203,9 @@ const PersonalUpdate = () => {
                     {...register('bio')}
                     disabled={!edit}
                     type="text"
-                    className={`w-[70%]  rounded p-2  ${edit ? 'border' : ''}`}
+                    className={`w-[70%] dark:text-black rounded p-2  ${
+                      edit ? 'border' : ''
+                    }`}
                   />
                 </div>
               </div>
@@ -294,7 +302,7 @@ const Security = () => {
             })}
             type="email"
             label="Email"
-            className={`p-2 rounded-lg mt-2 mb-2 ${
+            className={`p-2 rounded-lg dark:text-gray-950 mt-2 mb-2 ${
               !edit ? 'border-none bg-slate-50' : ''
             }`}
             disabled={!edit}
@@ -306,7 +314,7 @@ const Security = () => {
             })}
             type="password"
             label="password"
-            className={`p-2 rounded-lg mt-2 mb-2 ${
+            className={`p-2 rounded-lg dark:text-gray-950 mt-2 mb-2 ${
               !edit ? 'border-none bg-slate-50' : ''
             }`}
             disabled={!edit}
@@ -370,7 +378,7 @@ const UpdatePassword = () => {
                 })}
                 type="password"
                 label="old-password"
-                className="p-2 rounded-lg mt-2"
+                className="p-2 rounded-lg mt-2 dark:text-gray-950"
                 disabled={!edit}
               ></Input>
             </div>
@@ -381,7 +389,7 @@ const UpdatePassword = () => {
                 })}
                 type="password"
                 label="New password"
-                className="p-2 rounded-lg mt-2"
+                className="p-2 rounded-lg mt-2 dark:text-gray-950"
                 disabled={!edit}
               ></Input>
             </div>

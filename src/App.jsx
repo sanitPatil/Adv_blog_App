@@ -19,7 +19,7 @@ function App() {
     document.querySelector('#root').classList.add(themeValue);
   }, [darkTheme]);
   return (
-    <div className="dark:bg-slate-900 dark:text-slate-50">
+    <div className="dark:bg-slate-900 dark:text-slate-100">
       <Navbar />
       <Outlet />
       <footer className=" bg-gray-950 z-0 w-full text-center p-4  text-sm border-box">

@@ -13,9 +13,9 @@ function Card({ blog }) {
     });
   }, []);
   return (
-    <div className="w-1/5 h-full">
+    <div className="w-1/5 ml-4 dark:bg-black rounded-lg h-full">
       {blog && (
-        <div className="" key={blog.title}>
+        <div className="p-2" key={blog.title}>
           <Link to={`/blog/${blog.$id}`}>
             <div className="w-full  h-[70vh] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-all delay-75">
               <img
@@ -30,9 +30,9 @@ function Card({ blog }) {
                 </div>
               </div>
               <div className="absolute inset-2 text-white flex items-start mt-2 justify-end opacity-0 transition-opacity duration-300 hover:opacity-100">
-                <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                <div className="inline-block truncate bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-4">
                   {blog.category}
-                </span>
+                </div>
               </div>
             </div>
           </Link>

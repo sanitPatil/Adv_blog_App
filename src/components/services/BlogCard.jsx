@@ -56,62 +56,62 @@ function BlogCard() {
   return !url ? (
     <LoadingSkeleton />
   ) : (
-    <div className=" rounded-lg shadow-lg ">
-      {Error && <p>{Error}</p>}
-
+    <div className="m-10 ">
+      <p> {Error && <p>{Error}</p>}</p>
       <div className="w-full  text-center justify-center flex">
         <img
           src={url}
-          alt="Blog post image"
-          className="w-[70%] object-cover h-[80vh] rounded-lg hover:scale-110 transition delay-200"
+          alt={blog.title}
+          className="w-[90%] object-cover h-[80vh] rounded-lg hover:scale-110 transition delay-200"
         />
       </div>
-      <div className="p-6 ml-20  w-10/12">
-        <div className="">
-          <div className="flex justify-between ">
-            <div className="text-3xl font-bold ml-4 underline underline-offset-4  capitalize">
-              {blog.title}
-            </div>
-            <div className=" text-gray-800 text-bold m-2 mr-20 p-2 rounded-full">
-              {'#' + blog.category}
-            </div>
+      <div className="  w-[100%]">
+        <div className="flex justify-between mt-8 w-full">
+          <div className="flex justify-start text-2xl ml-12 font-semibold w-full capitalize">
+            {blog.title}
           </div>
+          <div className="flex justify-end mr-20  text-white bg-gray-500 p-2  text-bold rounded-full">
+            {'#' + blog.category}
+          </div>
+        </div>
+        <div className="m-6">
           {blog?.content && (
             <div className=" mb-4 italic p-2 text-black dark:bg-white border-b-2 text-xl m-1">
               {parse(blog.content)}
             </div>
           )}
-
-          <div className="flex w-full  items-center">
-            <div className="text-sm m-4 rounded-full  text-center p-2">
-              <p className="text-gray-800 w-full font-semibold ">John Doe</p>
-              {blog?.$createdAt && (
-                <p className="text-gray-500 w-20 ">
-                  {blog.$createdAt.substr(0, 7)}
-                </p>
-              )}
-            </div>
-            {isAuthor && (
-              <div className="w-full flex justify-end  m-2 ">
-                <button
-                  onClick={() => navigate('/add-post', { state: { blog } })}
-                  className="w-28 border p-2  text-white bg-black rounded-lg "
-                >
-                  Edit Blog
-                </button>
-                <button
-                  onClick={() => deletePost(blog)}
-                  className="w-28 ml-2 border p-2  text-white bg-black text-center rounded-lg "
-                >
-                  {loading ? (
-                    <LoaderCircle className="animate-spin w-full" />
-                  ) : (
-                    'Delete Blog'
-                  )}
-                </button>
-              </div>
+        </div>
+        <div className="flex w-full items-center">
+          <div className="text-sm m-4 rounded-full   text-center p-2">
+            <p className="text-gray-800 w-full font-semibold dark:text-white">
+              John Doe
+            </p>
+            {blog?.$createdAt && (
+              <p className="text-gray-500 dark:text-white w-20 ">
+                {blog.$createdAt.substr(0, 7)}
+              </p>
             )}
           </div>
+          {isAuthor && (
+            <div className="w-full flex justify-end  m-2 ">
+              <button
+                onClick={() => navigate('/add-post', { state: { blog } })}
+                className="w-28 border p-2  text-white bg-black rounded-lg "
+              >
+                Edit Blog
+              </button>
+              <button
+                onClick={() => deletePost(blog)}
+                className="w-28 ml-2 border p-2  text-white bg-black text-center rounded-lg "
+              >
+                {loading ? (
+                  <LoaderCircle className="animate-spin w-full" />
+                ) : (
+                  'Delete Blog'
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

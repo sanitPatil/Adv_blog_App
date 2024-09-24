@@ -150,12 +150,12 @@ class StorageService {
     }
   }
 
-  async getBlogListCategaryWise(category) {
+  async getBlogListCategaryWise(queries) {
     try {
       return await this.database.listDocuments(
         config.appwrite_db,
         config.appwrite_blog,
-        [Query.equal('category', [`${category}`])]
+        queries
       );
     } catch (error) {
       console.log(

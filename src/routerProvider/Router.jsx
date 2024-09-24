@@ -17,12 +17,8 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/home',
-        element: (
-          <AuthLayout>
-            <Home />
-          </AuthLayout>
-        ),
+        path: '/',
+        element: <Home />,
       },
       {
         path: '/all-post',
