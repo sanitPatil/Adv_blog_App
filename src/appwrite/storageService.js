@@ -150,12 +150,14 @@ class StorageService {
     }
   }
 
-  async getBlogListCategaryWise(queries) {
+  async getBlogListCategaryWise(data) {
+    console.log(data);
+
     try {
       return await this.database.listDocuments(
         config.appwrite_db,
         config.appwrite_blog,
-        queries
+        [Query.search('title', `${data}`)]
       );
     } catch (error) {
       console.log(

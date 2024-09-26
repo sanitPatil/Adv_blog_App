@@ -5,8 +5,8 @@ import { useBlogListStore } from '../../zustStore/Store';
 import Card from './Card';
 import { useForm } from 'react-hook-form';
 function AllPost() {
-  const { setBlogList } = useBlogListStore((state) => state);
-  const [postList, setPostList] = useState([]);
+  const { setBlogList, blogList } = useBlogListStore((state) => state);
+  const [blog, setBlog] = useState();
   const [Error, setError] = useState('');
   const navItem = ['travel', 'education', 'lifestyle'];
 
@@ -15,9 +15,6 @@ function AllPost() {
     (() => {
       storageService.getBlogList().then((res) => {
         if (res) {
-          console.log(res);
-
-          setPostList(res.documents);
           setBlogList(res.documents);
         }
       });
@@ -25,19 +22,24 @@ function AllPost() {
   }, []);
 
   const handleSearch = (data) => {
+    // console.log(data);
+
     try {
       setError('');
+      setBlog('');
       storageService
-        .getBlogListCategaryWise([Query.search('category', [`${data}`])])
+        .getBlogListCategaryWise(data.search)
         .then((res) => {
-          console.log(res);
-
-          setPostList(res);
+          // console.log('search res', res);
+          // console.log(res.documents);
+          setBlog(res.documents);
         })
         .catch((e) => {
           setError(e);
         });
     } catch (err) {
+      // console.log(err);
+
       setError(err);
     }
   };
@@ -46,7 +48,10 @@ function AllPost() {
       <div className="m-12 ">
         <nav>
           <div className="">
-            <form className="w-full flex m-2">
+            <form
+              className="w-full flex m-2"
+              onSubmit={handleSubmit(handleSearch)}
+            >
               <input
                 {...register('search')}
                 type="text"
@@ -67,14 +72,18 @@ function AllPost() {
           </div>
         </nav>
       </div>
-      <div className="w-full mt-10 flex flex-wrap mb-24 gap-6 justify-start">
-        {postList &&
-          postList.map((blog) => {
-            return blog.isPublished ? (
-              <Card blog={blog} key={blog.title} />
-            ) : null;
-          })}
-      </div>
+      {!blog ? (
+        <div className="w-full mt-10 flex flex-wrap mb-24 gap-6 justify-start">
+          {blogList &&
+            blogList.map((blog) => {
+              return <Card blog={blog} key={blog.title} />;
+            })}
+        </div>
+      ) : (
+        blog.map((blog) => {
+          return <Card blog={blog} key={blog.title} />;
+        })
+      )}
     </div>
   );
 }
