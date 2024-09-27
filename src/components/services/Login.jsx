@@ -5,6 +5,7 @@ import Input from '../Elements/Input';
 import { Loader } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLoginStore } from '../../zustStore/Store';
+import toast from 'react-hot-toast';
 function Login() {
   const { loginState, logOutState } = useLoginStore((state) => state);
   const [error, setError] = React.useState('');
@@ -47,6 +48,7 @@ function Login() {
     loginState(currentUser);
 
     setLoaidng(false);
+    toast.success('Login SuccessFully');
     navigate('/');
   };
 
@@ -54,7 +56,7 @@ function Login() {
     <section>
       <Container>
         <div className="mx-auto items-center justify-center py-12 w-full pb-2">
-          <div className="mx-auto grid w-[450px] gap-6 border-b-2 p-4 shadow-lg rounded-md ">
+          <div className="mx-auto grid w-[450px] dark:bg-slate-800 gap-6 border-b-2 p-4 shadow-lg rounded-md ">
             <div className="grid gap-2 text-center ">
               <h1 className="text-3xl font-bold">Login</h1>
               {error && (
@@ -75,7 +77,7 @@ function Login() {
                         message: `Email address must be a valid address!!!`,
                       },
                     })}
-                    className={`border p-2 rounded-md ${
+                    className={`border p-2 dark:text-black text-xl rounded-md ${
                       errors?.email ? 'border-red-800' : ''
                     }`}
                     id="email"
@@ -98,7 +100,7 @@ function Login() {
                           'Password must be at least 8 characters long and include one uppercase letter',
                       },
                     })}
-                    className={`border p-2 rounded-md ${
+                    className={`border p-2 dark:text-black text-xl rounded-md ${
                       errors?.password ? 'border-red-800' : ''
                     }`}
                     id="password"

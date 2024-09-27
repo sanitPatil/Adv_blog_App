@@ -52,39 +52,43 @@ function Navbar() {
   ];
 
   return (
-    <nav>
-      <header className="sticky top-0 flex h-16 items-center gap-4  px-4 ">
-        <nav className="">
-          <Link to={'/'}>
-            <BlogAppLogo className="w-1" />
-          </Link>
-        </nav>
-        <nav className="ml-20 w-[30%]">
-          <ul className="flex justify-between">
-            {navItem &&
-              navItem.map(
-                (item) =>
-                  item.active && (
-                    <Link to={item.path} key={item.navName}>
-                      <li className="font-semibold text-xl hover:underline hover:underline-offset-4">
-                        {item.navName}
-                      </li>
-                    </Link>
-                  )
-              )}
-          </ul>
-        </nav>
-        <nav className="w-full flex justify-end m-2">
-          <main className="flex justify-between p-4">
-            <div className="relative group">
-              <button className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition">
-                <UserRoundCog className="text-gray-700" />
-              </button>
+    <div className="w-full  h-16 sticky">
+      <div className="flex mx-3 justify-between">
+        <div className="flex gap-6  p-1">
+          <div className="">
+            <Link to={'/'}>
+              <BlogAppLogo className="p-2" />
+            </Link>
+          </div>
+          <div className="p-2 m-2">
+            <ul className="flex gap-4">
+              {navItem &&
+                navItem.map(
+                  (item) =>
+                    item.active && (
+                      <Link to={item.path} key={item.navName}>
+                        <li className="font-semibold text-xl hover:underline hover:underline-offset-4">
+                          {item.navName}
+                        </li>
+                      </Link>
+                    )
+                )}
+            </ul>
+          </div>
+        </div>
 
+        <div className="flex mr-4 mt-3 justify-center">
+          <div className="relative group">
+            <div className="flex ">
+              <button className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition">
+                <UserRoundCog className="text-gray-900" />
+              </button>
               <div
-                className={`text-center
-  opacity-0 pointer-events-none
-  absolute right-0 top-9 group-hover:opacity-100 group-hover:pointer-events-auto mt-1 w-32 bg-white border-gray-300 rounded-lg shadow-lg transition-opacity duration-300`}
+                className="text-center opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto
+            mt-1 w-32
+            pointer-events-none absolute right-0 top-9
+            bg-white border-gray-300 rounded-lg shadow-lg transition-opacity duration-300
+            "
               >
                 <ul className="rounded-lg bg-slate-50">
                   <li>
@@ -122,7 +126,9 @@ function Navbar() {
                 </ul>
               </div>
             </div>
-            <div className="ml-2 border rounded-full">
+          </div>
+          <div className="">
+            <div className="ml-2 border rounded-full ">
               <button
                 onClick={() => switchTheme()}
                 className="p-2 rounded-full"
@@ -130,11 +136,38 @@ function Navbar() {
                 {darkTheme ? <Moon /> : <Sun className="text-yellow-500 " />}
               </button>
             </div>
-          </main>
-        </nav>
-      </header>
-    </nav>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
 export default Navbar;
+
+{
+  /* <nav className=" top-0 flex h-16 items-center gap-4  p-6 ">
+      <div className="flex flex-wrap p-4">
+        <div className="">
+          <Link to={'/'}>
+            <BlogAppLogo className="w-1" />
+          </Link>
+        </div>
+        <div className="mt-2 ml-8">
+          <ul className="flex justify-between w-full gap-6 border">
+            {navItem &&
+              navItem.map(
+                (item) =>
+                  item.active && (
+                    <Link to={item.path} key={item.navName}>
+                      <li className="font-semibold text-xl hover:underline hover:underline-offset-4">
+                        {item.navName}
+                      </li>
+                    </Link>
+                  )
+              )}
+          </ul>
+        </div>
+      </div>
+    </nav> */
+}

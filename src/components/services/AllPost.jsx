@@ -56,7 +56,7 @@ function AllPost() {
                 {...register('search')}
                 type="text"
                 placeholder="search"
-                className=" border-gray-400  dark:text-white dark:bg-gray-900 dark:border-gray-600 rounded-3xl  py-2 px-4 w-full "
+                className=" border-gray-400  cursor-auto dark:text-white dark:bg-gray-900 dark:border-gray-600 rounded-3xl  py-2 px-4 w-full "
               />
               <button
                 type="submit"
