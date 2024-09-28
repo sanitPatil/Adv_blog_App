@@ -12,11 +12,11 @@ function Card({ blog }) {
       }
     });
   }, []);
-  return (
-    <div className="w-1/5 ml-4 dark:bg-black rounded-lg h-full">
-      {blog && (
-        <div className="p-2" key={blog.title}>
-          <Link to={`/blog/${blog.$id}`}>
+  return blog ? (
+    <Link to={`/blog/${blog.$id}`} key={blog.title}>
+      <div className="grid grid-cols-4 gap-6">
+        <div className=" ml-4 dark:bg-black rounded-lg h-full">
+          <div className="p-2">
             <div className="w-full  h-[70vh] rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-all delay-75">
               <img
                 className="w-full p-2 rounded-3xl"
@@ -35,11 +35,11 @@ function Card({ blog }) {
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    </Link>
+  ) : null;
 }
 
 export default Card;

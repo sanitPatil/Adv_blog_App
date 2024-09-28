@@ -1,91 +1,94 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import { storageService } from '../../index';
-import { useBlogListStore } from '../../zustStore/Store';
-
-import Card from './Card';
-import { useForm } from 'react-hook-form';
+import { useQuery } from '@tanstack/react-query';
+import parse from 'html-react-parser';
 function AllPost() {
-  const { setBlogList, blogList } = useBlogListStore((state) => state);
-  const [blog, setBlog] = useState();
-  const [Error, setError] = useState('');
-  const navItem = ['travel', 'education', 'lifestyle'];
-
-  const { register, handleSubmit } = useForm();
-  useEffect(() => {
-    (() => {
-      storageService.getBlogList().then((res) => {
-        if (res) {
-          setBlogList(res.documents);
-        }
-      });
-    })();
-  }, []);
-
-  const handleSearch = (data) => {
-    // console.log(data);
-
-    try {
-      setError('');
-      setBlog('');
-      storageService
-        .getBlogListCategaryWise(data.search)
-        .then((res) => {
-          // console.log('search res', res);
-          // console.log(res.documents);
-          setBlog(res.documents);
-        })
-        .catch((e) => {
-          setError(e);
-        });
-    } catch (err) {
-      // console.log(err);
-
-      setError(err);
-    }
+  const fetchBlogAll = async () => {
+    return await storageService.getBlogList();
   };
-  return (
-    <div className="w-full h-full">
-      <div className="m-12 ">
-        <nav>
-          <div className="">
-            <form
-              className="w-full flex m-2"
-              onSubmit={handleSubmit(handleSearch)}
-            >
-              <input
-                {...register('search')}
-                type="text"
-                placeholder="search"
-                className=" border-gray-400  cursor-auto dark:text-white dark:bg-gray-900 dark:border-gray-600 rounded-3xl  py-2 px-4 w-full "
-              />
-              <button
-                type="submit"
-                className="m-2 w-24 hover:border-2 font-bold p-1 rounded-full "
-              >
-                Search
-              </button>
-            </form>
-            <ul className="flex justify-center gap-12">
-              <li>#All</li>
-              {navItem && navItem.map((i) => <li key={i}>#{i}</li>)}
-            </ul>
-          </div>
-        </nav>
-      </div>
-      {!blog ? (
-        <div className="w-full mt-10 flex flex-wrap mb-24 gap-6 justify-start">
-          {blogList &&
-            blogList.map((blog) => {
-              return <Card blog={blog} key={blog.title} />;
-            })}
-        </div>
-      ) : (
-        blog.map((blog) => {
-          return <Card blog={blog} key={blog.title} />;
-        })
-      )}
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['get-all-blog-list'],
+    queryFn: fetchBlogAll,
+    staleTime: 10000,
+  });
+  console.log(data);
+
+  return isLoading ? (
+    <div className="w-full h-full p-20">
+      <LoadingSkeleton className="mx-auto" />
     </div>
+  ) : (
+    <main className="w-full h-full ">
+      <div>{error && <p>{error?.message}</p>}</div>
+      <div className={`grid grid-cols-3 gap-4 p-2 m-2`}>
+        {data &&
+          data.documents
+            .filter((blog) => blog.isPublished)
+            .map((blog) => <Card blog={blog} key={blog?.$id} />)}
+      </div>
+    </main>
   );
 }
 
 export default AllPost;
+
+const LoadingSkeleton = () => {
+  return (
+    <div className="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">
+      <div className="animate-pulse flex space-x-4">
+        <div className="rounded-full bg-slate-700 h-10 w-10"></div>
+        <div className="flex-1 space-y-6 py-1">
+          <div className="h-2 bg-slate-700 rounded"></div>
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+              <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+            </div>
+            <div className="h-2 bg-slate-700 rounded"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Card = ({ blog }) => {
+  const [url, setUrl] = useState('');
+  useEffect(() => {
+    const getPreview = async () => {
+      const res = await storageService.previewFile(blog?.featuredImage);
+      setUrl(res);
+    };
+    getPreview();
+  }, [blog?.featuredImage]);
+
+  return (
+    <div className="p-2 hover:scale-105 transition-all delay-75 text-center">
+      <div className=" dark:bg-black rounded-lg h-full">
+        <div className="p-2">
+          <div className="w-full  h-[70vh] rounded-xl overflow-hidden shadow-lg ">
+            {url && (
+              <img
+                className="w-full p-1 h-1/2 rounded-3xl"
+                src={url}
+                alt={blog.title}
+              />
+            )}
+            <div className="p-1 m-1">
+              <div className="font-bold text-xl italic">{blog.title}</div>
+              <div className="text-gray-700 text-base">
+                {blog && parse(blog.content)}
+              </div>
+            </div>
+            <div className="absolute inset-2 text-white flex items-start mt-2 justify-end opacity-0 transition-opacity duration-300 hover:opacity-100">
+              <div className="inline-block truncate bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-4">
+                {blog.category}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

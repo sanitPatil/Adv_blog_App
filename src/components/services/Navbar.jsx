@@ -3,7 +3,6 @@ import { BlogAppLogo } from '../../index';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  useBlogListStore,
   useLoginStore,
   useProfileStore,
   useTheme,
@@ -15,13 +14,11 @@ function Navbar() {
   const { darkTheme } = useTheme((state) => state);
   const [logOutLoading] = useState(false);
   const { clearProfileData } = useProfileStore((state) => state);
-  const { clearBlogList } = useBlogListStore((state) => state);
   const { switchTheme } = useTheme((state) => state);
   const logout = async () => {
     await authService.LogOut();
     logOutState();
     clearProfileData();
-    clearBlogList();
   };
   const navItem = [
     {
@@ -52,7 +49,7 @@ function Navbar() {
   ];
 
   return (
-    <div className="w-full  h-16 sticky">
+    <div className="w-full dark:bg-black h-16 sticky">
       <div className="flex mx-3 justify-between">
         <div className="flex gap-6  p-1">
           <div className="">
@@ -79,17 +76,11 @@ function Navbar() {
 
         <div className="flex mr-4 mt-3 justify-center">
           <div className="relative group">
-            <div className="flex ">
+            <div className=" relative group ">
               <button className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 transition">
                 <UserRoundCog className="text-gray-900" />
               </button>
-              <div
-                className="text-center opacity-0 group-hover:opacity-100 group-hover:pointer-events-auto
-            mt-1 w-32
-            pointer-events-none absolute right-0 top-9
-            bg-white border-gray-300 rounded-lg shadow-lg transition-opacity duration-300
-            "
-              >
+              <div className="absolute  hidden group-hover:block">
                 <ul className="rounded-lg bg-slate-50">
                   <li>
                     <Link

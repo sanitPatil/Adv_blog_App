@@ -237,8 +237,7 @@ class StorageService {
 
   async previewFile(fileId) {
     try {
-      const res = this.bucket.getFilePreview(config.appwrite_bucket, fileId);
-      return res;
+      return await this.bucket.getFilePreview(config.appwrite_bucket, fileId);
     } catch (error) {
       console.log('Appwrite serive :: get-file-preview :: error', error);
       return false;
