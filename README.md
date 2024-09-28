@@ -1,28 +1,29 @@
 # Advanced BlogApp with Appwrite
 
-@thesanitpatil
-
 ## Description
 
-This repository is an advanced version of the previous BlogApp. In this version, we have added features such as a search functionality for CRUD operations on blogs and user profile management with authentication-based services. The application uses Appwrite as the backend and React Hook Form for form handling, providing a seamless experience for users to manage their blog content and profiles.
+This project is a continuation of the blog app I started while learning React. It's an enhanced version of the previous blog app, utilizing Zustand for component-level state management. Additionally, TanStack Query (React Query) is used to optimize API calls, providing efficient caching, fetching, and updating of data.
 
 ## Features
 
-- **Search CRUD**: Users can perform create, read, update, and delete operations on blog posts, along with real-time search functionality.
+- **CRUD Operations**: Users can create, read, update, and delete blog posts.
 - **User Profile Management**: Manage user profiles with authentication and authorization using Appwrite services.
-- **Global State Management with Zustand**: Utilizes Zustand for efficient global state management, allowing seamless updates and sharing of state across components.
+- **Global State Management with Zustand**: Efficient global state management using Zustand, enabling seamless updates and shared state across components.
+- **Server-Side State Management with React Query:** React Query handles server-side data fetching, caching, synchronization, and updating efficiently.
 
 ## Technologies Used
 
-- **React**: A JavaScript library for building user interfaces.
-- **Appwrite**: A backend server for web and mobile developers.
-- **React Hook Form**: A library for managing forms in React.
-- **Tailwind CSS**: A utility-first CSS framework for styling.
-- **html-react-parser**: A parser to display Editor Text
-- **lucide-react**: A Featured Reach Icons
-- **react-quill**: A Symple User friendly Real Time Editor
-- **react-router-dom"**: To create Dynamics Routes
-- **zustand**: Global Satate Management
+1. **React**: JavaScript library for building user interfaces.
+
+2. **Appwrite**: Backend server for web and mobile developers.
+3. **Zustand**: Global state management library for React.
+4. **React Query**: Library for managing server-side state in React applications.
+5. **React Hook Form**: A library for handling form state and validation in React.
+6. **Tailwind CSS**: Utility-first CSS framework for styling.
+7. **html-react-parser**: A parser to render HTML content within React components.
+8. **lucide-react**: A comprehensive icon library for React.
+9. **React Quill**: A simple, user-friendly real-time editor.
+10. **React Router DOM**: A library for creating dynamic routes in React applications.
 
 ## Installation
 
@@ -55,7 +56,5 @@ Author
 **Sanit patil**
 
 [github](https://github.com/sanitPatil)
-<br>
+[linkedIn](https://www.linkedin.com/in/sanit-patil-3bba95246/)
 [instagram](https://www.instagram.com/thesanitpatil/?hl=en)
-<br>
-[linkedIn]()
