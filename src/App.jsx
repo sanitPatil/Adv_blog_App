@@ -3,16 +3,23 @@ import { authService, Footer, Navbar } from './index';
 import { useLoginStore, useTheme } from './zustStore/Store';
 import { Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
 function App() {
   const { loginState } = useLoginStore((state) => state);
   const { darkTheme } = useTheme((state) => state);
-  useEffect(() => {
-    (async () => {
-      const loginRes = await authService.getCurrentLogin();
-      loginState(loginRes);
-    })();
-  }, []);
 
+  const getLoginUser = async () => {
+    await authService.getCurrentLogin();
+  };
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['login-user'],
+    queryFn: getLoginUser,
+    staleTime: 20000,
+  });
+
+  if (data) {
+    loginState(data);
+  }
   useEffect(() => {
     const themeValue = darkTheme === true ? 'dark' : 'light';
     localStorage.setItem('theme', themeValue);
