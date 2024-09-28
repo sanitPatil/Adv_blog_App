@@ -86,13 +86,22 @@ class StorageService {
     category,
     content,
     title,
+    blogCreator,
   }) {
     try {
       return await this.database.createDocument(
         config.appwrite_db,
         config.appwrite_blog,
         ID.unique(),
-        { userId, featuredImage, isPublished, category, content, title }
+        {
+          userId,
+          featuredImage,
+          isPublished,
+          category,
+          content,
+          title,
+          blogCreator,
+        }
       );
     } catch (error) {
       console.log('Appwrite serive :: create-blog :: error', error);

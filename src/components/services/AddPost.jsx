@@ -67,6 +67,7 @@ const AddPost = () => {
         isPublished: data?.isPublished === 'true' ? true : false,
         content: data?.content,
         category: data?.category,
+        blogCreator: loginUser.name,
       });
 
       if (!blogUpload) {

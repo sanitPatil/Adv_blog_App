@@ -81,10 +81,10 @@ function BlogCard() {
             </div>
           )}
         </div>
-        <div className="flex w-full items-center">
-          <div className="text-sm m-4 rounded-full   text-center p-2">
-            <p className="text-gray-800 w-full font-semibold dark:text-white">
-              John Doe
+        <div className="flex w-full items-center ">
+          <div className="ml-14 font-bold text-sm m-4 rounded-full  border  text-center p-2">
+            <p className="text-gray-800 w-full font-semibold text-1xl dark:text-white">
+              {blog.blogCreator}
             </p>
             {blog?.$createdAt && (
               <p className="text-gray-500 dark:text-white w-20 ">
