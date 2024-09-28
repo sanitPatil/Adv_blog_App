@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { authService, storageService } from '../../index';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+
 function UserProfile() {
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -13,13 +14,17 @@ function UserProfile() {
     {
       navName: 'General',
     },
+
     {
-      navName: 'Security',
+      navName: 'Email-Setting',
+    },
+    {
+      navName: 'Password-Setting',
     },
   ];
 
   return (
-    <main className="grid grid-cols-[20%_70%]  max-h-screen ">
+    <main className="grid grid-cols-[20%_70%]  h-[80vh] ">
       <div className="h-[100%] w-full mb-8">
         <div className="w-full">
           <h1 className="text-center text-3xl dark:text-white pt-10 pb-4 font-bold">
@@ -52,7 +57,10 @@ function UserProfile() {
           <ProfileDetails />
         </main>
         <main id="#security" className={`${activeIndex === 1 ? '' : 'hidden'}`}>
-          <Security />
+          <UpdateEmail />
+        </main>
+        <main id="#security" className={`${activeIndex === 2 ? '' : 'hidden'}`}>
+          <UpdatePassword />
         </main>
       </section>
     </main>
@@ -148,7 +156,7 @@ const ProfileDetails = () => {
   };
 
   return (
-    <div className="ml-14 h-[80vh] w-full m-4">
+    <div className="ml-14 h-full w-full m-4">
       <h1 className="text-2xl  font-semibold underline underline-offset-4 italic text-center">
         Profile
       </h1>
@@ -274,8 +282,208 @@ const ProfileDetails = () => {
 };
 
 // EMAIL AND PASSWORD UPDATE
-const Security = () => {
-  return <div>security</div>;
+const UpdateEmail = () => {
+  const [edit, setEdit] = useState('');
+  const { loginUser } = useLoginStore((state) => state);
+  const [loading, setLoading] = useState(false);
+  //
+  // handleReset
+  const clear = () => {
+    setEdit(false);
+    reset({ email: loginUser?.email });
+  };
+  // handle submit
+  const { register, handleSubmit, reset } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const update = async ({ email, password }) => {
+    setLoading(true);
+    setEdit(false);
+    if (!email || !password) {
+      toast.error('all fields are required!');
+      setLoading(false);
+      setEdit(false);
+      return;
+    }
+    const res = await authService.updateUserEmail({ email, password });
+    if (!res) {
+      toast.error('failed to update email');
+      setLoading(false);
+      setEdit(false);
+      return;
+    }
+    setLoading(false);
+    setEdit(false);
+    reset();
+    toast.success('Email updated successfully');
+  };
+  useEffect(() => {
+    setEdit(false);
+    reset({ email: loginUser?.email, password: '' });
+  }, [loginUser]);
+  return (
+    <div className="w-full h-full  mt-20 ">
+      <h1 className="text-center text-xl font-semibold m-4">Password Update</h1>
+      <form onSubmit={handleSubmit(update)}>
+        <div className="w-full h-full">
+          <div className="m-4">
+            Email{' '}
+            <input
+              {...register('email', {
+                required: true,
+              })}
+              disabled={!edit}
+              type="text"
+              className="w-full p-4 mt-4 dark:text-black  rounded-full  "
+            />
+          </div>
+          Password
+          <div className="m-4">
+            <input
+              {...register('password', {
+                required: true,
+              })}
+              disabled={!edit}
+              type="password"
+              className="w-full p-4 dark:text-black rounded-full "
+            />
+          </div>
+          <div className="w-full text-center m-2">
+            {edit ? (
+              <div>
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="rounded-full w-1/4 m-2 bg-black text-white p-2 text-xl"
+                >
+                  clear
+                </button>
+                <button className="rounded-full w-1/4 bg-black text-white p-2 text-xl">
+                  {loading ? (
+                    <LoaderCircle className="animate-spin w-full" />
+                  ) : (
+                    'submit'
+                  )}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEdit(true)}
+                className="rounded-full w-1/4 bg-black text-white p-2 text-xl"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// PASSWORD UPDATE
+const UpdatePassword = () => {
+  const [edit, setEdit] = useState('');
+  const { loginUser } = useLoginStore((state) => state);
+  const [loading, setLoading] = useState(false);
+  //
+  // handleReset
+  const clear = () => {
+    setEdit(false);
+    setLoading(false);
+    reset();
+  };
+  // handle submit
+  const { register, handleSubmit, reset } = useForm();
+  // const password
+  const update = async ({ newPassword, oldPassword }) => {
+    setLoading(true);
+    setEdit(false);
+    if (!newPassword || !oldPassword) {
+      toast.error('all fields are required!');
+      setLoading(false);
+      setEdit(false);
+      return;
+    }
+    const res = await authService.updateUserPassword({
+      newPassword,
+      oldPassword,
+    });
+    if (!res) {
+      toast.error('failed to update password');
+      setLoading(false);
+      setEdit(false);
+      return;
+    }
+    setLoading(false);
+    setEdit(false);
+    reset();
+    toast.success('password updated successfully');
+  };
+  return (
+    <div className="w-full h-full  mt-20 ">
+      <h1 className="text-center text-xl font-semibold m-4">Password Update</h1>
+      <form onSubmit={handleSubmit(update)}>
+        <div className="w-full h-full">
+          <div className="m-4">
+            oldPassword{' '}
+            <input
+              {...register('oldPassword', {
+                required: true,
+              })}
+              disabled={!edit}
+              type="password"
+              className="w-full p-4 mt-4 dark:text-black  rounded-full  "
+            />
+          </div>
+          new Password
+          <div className="m-4">
+            <input
+              {...register('newPassword', {
+                required: true,
+              })}
+              disabled={!edit}
+              type="password"
+              className="w-full p-4 dark:text-black rounded-full "
+            />
+          </div>
+          <div className="w-full text-center m-2">
+            {edit ? (
+              <div>
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="rounded-full w-1/4 m-2 bg-black text-white p-2 text-xl"
+                >
+                  clear
+                </button>
+                <button className="rounded-full w-1/4 bg-black text-white p-2 text-xl">
+                  {loading ? (
+                    <LoaderCircle className="animate-spin w-full" />
+                  ) : (
+                    'submit'
+                  )}
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEdit(true)}
+                className="rounded-full w-1/4 bg-black text-white p-2 text-xl"
+              >
+                Edit
+              </button>
+            )}
+          </div>
+        </div>
+      </form>
+    </div>
+  );
 };
 // LOADING skeleton
 const LoadingSkeleton = () => {
