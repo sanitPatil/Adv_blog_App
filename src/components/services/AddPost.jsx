@@ -6,6 +6,7 @@ import { useLoginStore } from '../../zustStore/Store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LoaderCircleIcon } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 const AddPost = () => {
   const navigate = useNavigate();
@@ -29,20 +30,31 @@ const AddPost = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      content: blog?.content || '',
-      title: blog?.title || '',
+      content: '',
+      title: '',
+      isPublished: '',
+      category: '',
     },
   });
-
+  useEffect(() => {
+    if (blog) {
+      reset({
+        content: blog.content,
+        title: blog.title,
+        isPublished: blog.isPublished,
+        category: blog.category,
+      });
+    }
+  }, [blog]);
   const [loading, setLoading] = useState(false);
   const [Error, setError] = useState('');
   const [Edit, setEdit] = useState(false);
 
   const addPost = async (data) => {
     setLoading(true);
-    console.log(data);
+    //console.log(data);
     if (!blog) {
-      console.log('add-method call');
+      //console.log('add-method call');
       setError('');
       setEdit(false);
 
@@ -78,45 +90,46 @@ const AddPost = () => {
       }
       alert('Blog Added successfully!');
     } else {
-      console.log('update method call');
+      //console.log('update method call');
       setError('');
       setEdit(false);
 
       if (!data) {
         setLoading(false);
-        setError('All fields Are required!!!');
+        toast.error('All fields Are required!!!');
         setEdit(true);
         return;
       }
       const delRes = await storageService.deleteFile(blog?.featuredImage);
       if (!delRes) {
         setLoading(false);
-        setError('Failed to delete Asset!!!');
+        toast.error('Failed to delete Asset!!!');
         setEdit(true);
         return;
       }
       const uploadRes = await storageService.uploadFile(data?.blogPicture[0]);
       if (!uploadRes) {
         setLoading(false);
-        setError('failed to upload Res!!!');
+        toast.error('failed to upload Res!!!');
         setEdit(true);
         return;
       }
       const res = await storageService.updateBlog(blog?.$id, {
-        userId: blog?.userId,
-        featuredImage: uploadRes?.$id,
-        content: data?.content,
-        title: data?.slug,
-        category: data?.category,
-        isPublished: data?.isPublished === 'true' ? true : false,
+        userId: blog.userId,
+        featuredImage: uploadRes.$id,
+        content: data.content,
+        title: data.slug,
+        category: data.category,
+        isPublished: data.isPublished === 'true' ? true : false,
+        blogCreator: blog.blogCreator,
       });
       if (!res) {
         setLoading(false);
-        setError('failed to update blog!!!');
+        toast.error('failed to update blog!!!');
         setEdit(true);
         return;
       }
-      alert('update successfully');
+      toast.success('update successfully');
     }
     setLoading(false);
     setError('');

@@ -76,7 +76,7 @@ function BlogCard() {
         </div>
         <div className="m-6">
           {blog?.content && (
-            <div className=" mb-4 italic p-2 text-black dark:bg-white border-b-2 text-xl m-1">
+            <div className=" mb-4 italic p-2 text-black  border-b-2 text-xl m-1">
               {parse(blog.content)}
             </div>
           )}
