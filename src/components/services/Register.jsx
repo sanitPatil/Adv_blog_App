@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import Input from '../Elements/Input';
 import { LoaderCircle, User2Icon } from 'lucide-react';
 import { useLoginStore, useProfileStore } from '../../zustStore/Store';
+import toast from 'react-hot-toast';
 
 function Register() {
   const { loginState } = useLoginStore((state) => state);
@@ -46,7 +47,7 @@ function Register() {
     setError('');
     reset();
     setProfile(true);
-    alert('successfully register, please complete profile.');
+    toast.success('Registration success');
   };
 
   return (
@@ -73,7 +74,7 @@ function Register() {
                   maxLength: 20,
                   minLength: 5,
                 })}
-                className={`border p-2 rounded-md ${
+                className={`border p-2 rounded-md text-black ${
                   errors?.name ? 'border-red-800' : ''
                 }`}
                 label="Name"
@@ -97,7 +98,7 @@ function Register() {
                     message: `Email address must be a valid address!!!`,
                   },
                 })}
-                className={`border p-2 rounded-md ${
+                className={`border p-2 rounded-md text-black ${
                   errors?.email ? 'border-red-800' : ''
                 }`}
                 id="email"
@@ -120,7 +121,7 @@ function Register() {
                       'Password must be at least 8 characters long and include one uppercase letter',
                   },
                 })}
-                className={`border p-2 rounded-md ${
+                className={`border p-2 rounded-md text-black ${
                   errors?.password ? 'border-red-800' : ''
                 }`}
                 id="password"
@@ -220,11 +221,12 @@ export const CreateProfile = () => {
     setLoading(false);
     setError('');
     reset();
+    toast.success('profile setup successfully done');
     navigate('/');
   };
   return (
     <>
-      <div className="grid gap-2 text-center ">
+      <div className="dark:text-white grid gap-2 text-center ">
         <h1 className="text-2xl font-semibold">Complete User Profile</h1>
         {error && <p className="text-red-700 text-center w-full ">{error}</p>}
       </div>
@@ -258,12 +260,12 @@ export const CreateProfile = () => {
               },
             })}
             label="userName"
-            className="rounded-lg p-2 shad ow w[70%]"
+            className="rounded-lg p-2 shad ow w-[70%] dark:text-black"
           />
           <Input
             {...register('bio')}
             label="bio"
-            className="rounded-lg p-2 shadow w[70%]"
+            className="rounded-lg p-2 shadow w[70%] dark:text-black"
           />
         </div>
         <div className="text-center">

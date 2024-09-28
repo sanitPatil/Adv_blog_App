@@ -30,15 +30,13 @@ const profileStore = create()(
 );
 
 const themeStore = create()(
-  persist(
-    (set) => ({
-      darkTheme: false,
-      switchTheme: () => set((state) => ({ darkTheme: !state.darkTheme })),
-    }),
-    {
-      name: 'Theme_Mode',
-    }
-  )
+  persist((set) => ({
+    darkTheme: false,
+    switchTheme: () => set((state) => ({ darkTheme: !state.darkTheme })),
+  })),
+  {
+    name: 'theme',
+  }
 );
 
 export const useLoginStore = loginStore;

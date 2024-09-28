@@ -56,14 +56,18 @@ class StorageService {
     }
   }
 
-  async updateUserProfile(id, data) {
+  async updateUserProfile(id, { userId, username, name, bio, profilePicture }) {
     try {
       return this.database.updateDocument(
         config.appwrite_db,
         config.appwrite_user,
         id,
         {
-          ...data,
+          userId,
+          username,
+          name,
+          bio,
+          profilePicture,
         }
       );
     } catch (error) {

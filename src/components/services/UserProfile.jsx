@@ -1,26 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLoginStore, useProfileStore } from '../../zustStore/Store';
-import { LoaderCircle, UserRoundPen } from 'lucide-react';
+import { LoaderCircle, User2Icon, UserRoundPen } from 'lucide-react';
 import Input from '../Elements/Input';
 import { useForm } from 'react-hook-form';
 import { authService, storageService } from '../../index';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 function UserProfile() {
-  const { loginUser } = useLoginStore((state) => state);
-  const { setProfileData } = useProfileStore((state) => state);
-
   const [activeIndex, setActiveIndex] = useState(0);
-  const [profileLoading, setProfileLoading] = useState(false);
-  useEffect(() => {
-    setProfileLoading(true);
-    (async () => {
-      const profileRes = await storageService.getUserProfile(loginUser?.$id);
 
-      if (profileRes) {
-        setProfileData(profileRes.documents[0]);
-      }
-    })();
-    setProfileLoading(false);
-  }, []);
   const navItem = [
     {
       navName: 'General',
@@ -31,9 +19,9 @@ function UserProfile() {
   ];
 
   return (
-    <main className="grid grid-cols-[20%_80%]  max-h-screen ">
-      <div className="h-[85vh] w-full  bg-gray-95 0">
-        <div className="w-full ">
+    <main className="grid grid-cols-[20%_70%]  max-h-screen ">
+      <div className="h-[100%] w-full mb-8">
+        <div className="w-full">
           <h1 className="text-center text-3xl dark:text-white pt-10 pb-4 font-bold">
             Setting
           </h1>
@@ -59,9 +47,9 @@ function UserProfile() {
           </nav>
         </div>
       </div>
-      <section className=" w-full mx-auto items-center mt-12">
+      <section className="w-full h-full items-center">
         <main className={`${activeIndex === 0 ? '' : 'hidden'}`}>
-          {profileLoading ? <LodingSkeleton /> : <PersonalUpdate />}
+          <ProfileDetails />
         </main>
         <main id="#security" className={`${activeIndex === 1 ? '' : 'hidden'}`}>
           <Security />
@@ -72,426 +60,225 @@ function UserProfile() {
 }
 
 export default UserProfile;
-// ***********************************************************************************
-const PersonalUpdate = () => {
-  const { loginUser } = useLoginStore((state) => state);
 
+// PERSONAL DETAILS
+
+const ProfileDetails = () => {
   const [edit, setEdit] = useState(false);
-  const { profileData } = useProfileStore((state) => state);
-  const [error, setError] = useState('');
+  const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
-  const [url, setUrl] = useState();
-  let defaultData = '';
-  useEffect(() => {
-    const defaultData = localStorage.getItem('user-profile');
-  }, [profileData, loginUser]);
-  const { register, handleSubmit, reset } = useForm({
+  const { loginUser } = useLoginStore((state) => state);
+  const { profileData, setProfileData } = useProfileStore((state) => state);
+
+  const { register, handleSubmit, errors, reset } = useForm({
     defaultValues: {
-      name: profileData?.name || defaultData?.name,
-      username: profileData?.username || defaultData?.username,
-      bio: profileData?.bio || defaultData?.bio,
+      name: '',
+      username: '',
+      bio: '',
     },
   });
 
+  const getProfile = async () => {
+    return await storageService.getUserProfile(loginUser?.$id);
+  };
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ['getProfile'],
+    queryFn: getProfile,
+    staleTime: 10000,
+  });
   useEffect(() => {
-    reset();
-    if (profileData?.profilePicture) {
-      storageService.previewFile(profileData?.profilePicture).then((res) => {
+    if (data) setProfileData(data.documents[0]);
+  }, [data]);
+  useEffect(() => {
+    if (profileData) reset(profileData);
+  }, [profileData, reset]);
+
+  useEffect(() => {
+    storageService.previewFile(profileData?.profilePicture).then((res) => {
+      if (res) {
         setUrl(res);
-      });
-    }
-  }, [profileData, loginUser]);
+      }
+    });
+  }, [profileData, reset]);
 
-  const userProfileData = async (data) => {
-    setError('');
+  // update method
+  const updateProfile = async (data) => {
+    setEdit(false);
     setLoading(true);
-
-    const fileId = profileData?.profilePicture;
-
-    const file = data?.profilePicture[0];
-
-    if (file) {
-      const uploadRes = await storageService.fileUpdate(file);
-      if (!uploadRes) {
-        setError('failed to update Profile Picture');
+    if (!data) {
+      toast.error('all fields are required!!!');
+      setLoading(false);
+      return;
+    }
+    let res = data?.profilePicture;
+    if (data?.profilePicture) {
+      res = await storageService.uploadFile(data?.profilePicture[0]);
+      if (!res) {
+        toast.error(`failed to upload file`);
         setLoading(false);
         return;
       }
-      data.profilePicture = uploadRes.$id;
 
-      await storageService.deleteFile(fileId);
-    } else {
-      data.profilePicture = fileId;
+      await storageService.deleteFile(profileData?.profilePicture);
+      data.profilePicture = res?.$id;
     }
-    data.userId = profileData?.userId;
-
-    const profile = await storageService.updateUserProfile(
-      profileData?.$id,
-      data
-    );
-    if (!profile) {
-      setError('profile Error please try again');
+    const updateProfileRes = await storageService.updateUserProfile(data?.$id, {
+      userId: loginUser.$id || profileData.userId,
+      username: data.username || profileData.username,
+      bio: data.bio || profileData.bio,
+      profilePicture: data.profilePicture || profileData.profilePicture,
+      name: loginUser.name || profileData.name,
+    });
+    if (!updateProfileRes) {
+      toast.error('failed to upload profile res');
       setLoading(false);
       return;
     }
+    setProfileData(updateProfileRes);
+    reset(profileData);
     setEdit(false);
     setLoading(false);
-    reset();
-    alert('profile updated successfully');
+    toast.success('Profile successfully Updated ');
   };
-  return (
-    <div>
-      {error && <p className="text-red-700 text-center">{error}</p>}
-      <form onSubmit={handleSubmit(userProfileData)}>
-        <div className="">
-          <div className=" w-full h-full">
-            <h1 className="text-center text-3xl font-semibold mt-4">
-              User Profile Details
-            </h1>
-            <div className="grid grid-cols-2 gap-6 mt-2">
-              <div className="">
-                <div className="flex justify-end pr-10 pt-1">
-                  {!edit ? (
-                    <label
-                      onClick={() => setEdit(true)}
-                      className=" bg-black font-semibold p-2 m-2  text-white rounded-xl"
-                    >
-                      Edit
-                    </label>
-                  ) : (
-                    <button
-                      type="submit"
-                      className=" bg-black font-semibold p-2 m-2  text-white rounded-xl"
-                    >
-                      {loading ? (
-                        <LoaderCircle className="animate-spin" />
-                      ) : (
-                        'save & update'
-                      )}
-                    </button>
-                  )}
-                </div>
-                <div className="flex justify-between p-1 m-2  ">
-                  <label className="p-1">Name</label>
-                  <input
-                    {...register('name')}
-                    disabled={true}
-                    type="text"
-                    className={`w-[70%] dark:text-black rounded p-2  ${
-                      edit ? 'border' : ''
-                    }`}
-                  />
-                </div>
-                <div className="flex justify-between p-1 m-2">
-                  <label htmlFor="" className="p-1">
-                    user Name
-                  </label>
-                  <input
-                    {...register('username')}
-                    disabled={!edit}
-                    type="text"
-                    className={`w-[70%] dark:text-black  rounded p-2  ${
-                      edit ? 'border' : ''
-                    }`}
-                  />
-                </div>
-                <div className="flex justify-between p-1 m-2">
-                  <label htmlFor="" className="p-1">
-                    Bio
-                  </label>
-                  <input
-                    {...register('bio')}
-                    disabled={!edit}
-                    type="text"
-                    className={`w-[70%] dark:text-black rounded p-2  ${
-                      edit ? 'border' : ''
-                    }`}
-                  />
-                </div>
-              </div>
-              <div className="flex gap-4">
-                <div className=" mx-auto text-center ">
-                  {url ? (
-                    <img
-                      key={Date.now()}
-                      // onError={() => console.log('failed to load Image')}
-                      alt={profileData?.name}
-                      src={String(url)}
-                      className="h-40 w-40 mt-10 mx-auto border hover:border-purple-800 rounded-full text-center hover:scale-125 transition-transform duration-200"
-                    />
-                  ) : (
-                    <UserRoundPen className="w-full h-full p-2 rounded-full border text-center" />
-                  )}
-                </div>
-                <div className="flex items-center mr-6">
-                  <Input
-                    {...register('profilePicture')}
-                    label="choose Profile"
-                    className={`block w-full text-sm text-slate-500
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-full file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-violet-50 file:text-violet-700 rounded-2xl 
-                               ${
-                                 !edit
-                                   ? 'hover:file:bg-gray-100'
-                                   : ' hover:file:bg-violet-100 '
-                               }`}
-                    type="file"
-                    disabled={!edit}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-// =************************************************************************************************
-const Security = () => {
-  //security
-  const [edit, setEdit] = useState(false);
-  const { loginUser, loginState } = useLoginStore((state) => state);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { register, handleSubmit, reset } = useForm({
-    defaultValues: {
-      email: loginUser?.email,
-    },
-  });
-
-  useEffect(() => {}, [loginUser]);
-
-  const updateEmail = async (data) => {
-    setError('');
-    setLoading(true);
-
-    if (!data) {
-      setError('All fileds Are required!');
-      setEdit(true);
-      setLoading(false);
-      return;
-    }
-    const emailRes = await authService.updateUserEmail(data);
-    if (!emailRes) {
-      setError('failed to update Email please try again');
-      setLoading(false);
-    }
-    setError('');
-    loginState(emailRes);
+  // handle reset
+  const handlereset = () => {
+    reset();
     setEdit(false);
-    setLoading(false);
-    reset();
-    alert(`email update successfully`);
   };
+
   return (
-    <>
-      <h1 className="text-3xl font-semibold mt-4 text-center pt-2">
-        Security{' '}
+    <div className="ml-14 h-[80vh] w-full m-4">
+      <h1 className="text-2xl  font-semibold underline underline-offset-4 italic text-center">
+        Profile
       </h1>
-      {error && <p>{error}</p>}
-      <div className="grid grid-cols-2 gap-4 ">
-        <form onSubmit={handleSubmit(updateEmail)}>
-          <div className="w-full  mt-4  text-ceter"></div>
-          <Input
-            {...register('email', {
-              required: true,
-            })}
-            type="email"
-            label="Email"
-            className={`p-2 rounded-lg dark:text-gray-950 mt-2 mb-2 ${
-              !edit ? 'border-none bg-slate-50' : ''
-            }`}
-            disabled={!edit}
-            placeholder={loginUser && loginUser?.email}
-          ></Input>
-          <Input
-            {...register('password', {
-              required: true,
-            })}
-            type="password"
-            label="password"
-            className={`p-2 rounded-lg dark:text-gray-950 mt-2 mb-2 ${
-              !edit ? 'border-none bg-slate-50' : ''
-            }`}
-            disabled={!edit}
-          ></Input>
-          <div className="text-center">
-            <button
-              type={!edit ? 'button' : 'submit'}
-              onClick={!edit ? () => setEdit(true) : null}
-              className="text-xl p-2 rounded-lg font-bold bg-black text-white"
-            >
-              {!edit ? 'Edit' : loading ? <LoaderCircle /> : 'Update&save'}
-            </button>
-          </div>
-        </form>
-        <UpdatePassword />
-      </div>
-    </>
-  );
-};
-
-/*************************************************************************** */
-const UpdatePassword = () => {
-  const [edit, setEdit] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const { register, handleSubmit, reset } = useForm();
-
-  const updatePWD = async (data) => {
-    setError('');
-    setLoading(true);
-    if (!data) {
-      setError('All fileds Required!');
-      setEdit(false);
-      setLoading(false);
-      return;
-    }
-
-    const res = await authService.updateUserPassword(data);
-    if (!res) {
-      setError(`failed to update password`);
-      setLoading(false);
-      return;
-    }
-
-    alert('password update Successfully');
-    reset();
-    setLoading(false);
-    setEdit(false);
-  };
-  return (
-    <div>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit(updatePWD)}>
-        <div className=" mt-2 p-2">
-          <div className="grid grid-cols-2 ">
-            <div>
-              <Input
-                {...register('oldPassword', {
-                  required: true,
+      <form onSubmit={handleSubmit(updateProfile)}>
+        <div className="grid grid-cols-2 gap-4 mx-auto p-2 m-4">
+          <div className=" ">
+            <div className="flex">
+              <label htmlFor="" className="p-4 font-bold ">
+                {' '}
+                Name:
+              </label>
+              <input
+                {...register('name', {
+                  required: {
+                    value: true,
+                    message: 'name cannot be empty',
+                  },
                 })}
-                type="password"
-                label="old-password"
-                className="p-2 rounded-lg mt-2 dark:text-gray-950"
-                disabled={!edit}
-              ></Input>
+                type="text"
+                disabled={true}
+                className="ml-8 w-full m-2 p-2 border rounded-full dark:text-gray-950 "
+              />
             </div>
-            <div>
-              <Input
-                {...register('newPassword', {
-                  required: true,
+            <div className="flex">
+              <label htmlFor="" className="p-4 font-bold ">
+                {' '}
+                username
+              </label>
+              <input
+                {...register('username', {
+                  required: {
+                    value: true,
+                    message: 'username cannot be emplty',
+                  },
                 })}
-                type="password"
-                label="New password"
-                className="p-2 rounded-lg mt-2 dark:text-gray-950"
+                type="text"
                 disabled={!edit}
-              ></Input>
+                className="w-full m-2 p-2 border rounded-full dark:text-gray-950 "
+              />
+            </div>
+            <div className="flex">
+              <label htmlFor="" className="p-4 font-bold ">
+                {' '}
+                Bio
+              </label>
+              <input
+                {...register('bio', {
+                  required: {
+                    value: true,
+                    message: 'bio cannot be emplty',
+                  },
+                })}
+                type="text"
+                disabled={!edit}
+                className=" ml-14 w-full m-2 p-2  border rounded-full  dark:text-gray-950"
+              />
             </div>
           </div>
-          <div className="text-center m-2">
-            <button
-              type={!edit ? 'button' : 'submit'}
-              onClick={!edit ? () => setEdit(true) : null}
-              className="text-xl p-1  rounded-lg font-bold bg-black text-white"
-            >
-              {!edit ? 'Edit' : loading ? <LoaderCircle /> : 'Update & Save'}
-            </button>
+          <div className=" flex m-1">
+            {!url ? (
+              <User2Icon className="border w-40 h-40 rounded-full" />
+            ) : (
+              <img src={url} className="border w-40 h-40 rounded-full" />
+            )}
+            <div className="">
+              <input
+                required
+                disabled={!edit}
+                {...register('profilePicture', {
+                  required: {
+                    value: true,
+                    message: 'pease select an image! ',
+                  },
+                })}
+                label="choose Profile"
+                className={` flex mt-14 ml-8  file:mr-4 file:py-2 file:px-4
+                                file:rounded-full file:-0 file:text-sm file:font-semibold mx-auto rounded-2xl
+                                ${
+                                  !edit
+                                    ? 'file:bg-gray-500 file:text-gray-700'
+                                    : `
+                                file:bg-violet-50 file:text-violet-700 `
+                                }`}
+                type="file"
+              />
+              {errors && (
+                <p className="text-red-800">{errors?.blogPicture?.message}</p>
+              )}
+            </div>
           </div>
+        </div>
+        <div className="w-full text-center  text-white p-1">
+          {edit ? (
+            <div>
+              <button
+                type="button"
+                onClick={handlereset}
+                className="w-1/4 border m-2 p-2 rounded-full bg-black font-bold "
+              >
+                cancel
+              </button>
+              <button className="w-1/4 border m-2 p-2 rounded-full text-center bg-black font-bold">
+                {loading ? (
+                  <LoaderCircle className=" animate-spin w-full" />
+                ) : (
+                  'update'
+                )}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setEdit(true)}
+              className="w-1/4 border p-2 rounded-full bg-black font-bold "
+            >
+              Edit
+            </button>
+          )}
         </div>
       </form>
     </div>
   );
 };
 
-////////////****************************************************************************** */
-// const AccountDelete = () => {
-//   const [showModal, setShowModal] = useState(false);
-//   const { loginUser } = useLoginStore((state) => state);
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState('');
-
-//   const handleDeleteAccount = () => {
-//     setError('');
-//     setLoading(true);
-//     if (!loginUser?.$id) {
-//       setError('id could not be found please try again');
-//       setLoading(false);
-//     }
-//     authService
-//       .deleteAccount(loginUser.$id)
-//       .then((res) => {
-//         alert('account deleted succesfully');
-//         setError('');
-//         setLoading(false);
-//         setShowModal(false);
-//         return;
-//       })
-//       .catch((err) => {
-//         setError(`${err.message}`);
-//         setLoading(false);
-//         setShowModal(false);
-//         return;
-//       });
-//   };
-//   return (
-//     <>
-//       <div>
-//         <div className="w-full h-full text-center m-4 font-bold text-red-700 text-3xl">
-//           <h1>Delete Account</h1>
-//           {error && <p>{error}</p>}
-//         </div>
-
-//         <div className="w-full h-full text-center">
-//           <button
-//             className="bg-red-700 p-2 text-white font-bold "
-//             onClick={() => setShowModal(true)}
-//           >
-//             Delete Account
-//           </button>
-//         </div>
-//         {showModal && (
-//           <div className="modal">
-//             <div className="modal-content text-red-700 p-2 text-center m-4">
-//               <h2>Are you sure?</h2>
-//               <p>
-//                 This action cannot be undone. You will permanently lose all your
-//                 data associated with this account.
-//               </p>
-//             </div>
-//             <div className="w-full h-full text-red-700 text-center font-semibold">
-//               <button
-//                 onClick={() => setShowModal(false)}
-//                 className="p-2 font-bold border text-white bg-red-700 rounded-lg m-2"
-//               >
-//                 Cancel
-//               </button>
-//               <div className="w-full">
-//                 <button
-//                   onClick={handleDeleteAccount}
-//                   className="p-2 font-bold border w-30 h-full text-white bg-red-700 rounded-lg"
-//                 >
-//                   {!loading ? (
-//                     'Comfirm Delete'
-//                   ) : (
-//                     <LoaderCircle className="animate-spin" />
-//                   )}
-//                 </button>
-//               </div>
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     </>
-//   );
-// };
-
-const LodingSkeleton = () => {
+// EMAIL AND PASSWORD UPDATE
+const Security = () => {
+  return <div>security</div>;
+};
+// LOADING skeleton
+const LoadingSkeleton = () => {
   return (
     <div className="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">
       <div className="animate-pulse flex space-x-4">

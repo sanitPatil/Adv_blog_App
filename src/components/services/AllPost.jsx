@@ -13,7 +13,7 @@ function AllPost() {
     queryFn: fetchBlogAll,
     staleTime: 10000,
   });
-  console.log(data);
+  //console.log(data);
 
   return isLoading ? (
     <div className="w-full h-full p-20">

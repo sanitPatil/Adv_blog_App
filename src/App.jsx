@@ -16,16 +16,18 @@ function App() {
     queryFn: getLoginUser,
     staleTime: 20000,
   });
-
   useEffect(() => {
     if (data) {
       loginState(data);
     }
+  }, [data]);
+  useEffect(() => {
     const themeValue = darkTheme === true ? 'dark' : 'light';
     localStorage.setItem('theme', themeValue);
     document.querySelector('#root').classList.remove('light', 'dark');
     document.querySelector('#root').classList.add(themeValue);
-  }, [darkTheme, data]);
+  }, [darkTheme]);
+
   return (
     <div className="dark:bg-slate-900 dark:text-slate-100">
       <div>
