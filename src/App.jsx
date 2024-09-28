@@ -9,7 +9,7 @@ function App() {
   const { darkTheme } = useTheme((state) => state);
 
   const getLoginUser = async () => {
-    await authService.getCurrentLogin();
+    return await authService.getCurrentLogin();
   };
   const { data, error, isLoading } = useQuery({
     queryKey: ['login-user'],
@@ -17,15 +17,15 @@ function App() {
     staleTime: 20000,
   });
 
-  if (data) {
-    loginState(data);
-  }
   useEffect(() => {
+    if (data) {
+      loginState(data);
+    }
     const themeValue = darkTheme === true ? 'dark' : 'light';
     localStorage.setItem('theme', themeValue);
     document.querySelector('#root').classList.remove('light', 'dark');
     document.querySelector('#root').classList.add(themeValue);
-  }, [darkTheme]);
+  }, [darkTheme, data]);
   return (
     <div className="dark:bg-slate-900 dark:text-slate-100">
       <div>
