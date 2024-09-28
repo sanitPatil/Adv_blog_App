@@ -2,6 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { storageService } from '../../index';
 import { useQuery } from '@tanstack/react-query';
 import parse from 'html-react-parser';
+import { Link } from 'react-router-dom';
 function AllPost() {
   const fetchBlogAll = async () => {
     return await storageService.getBlogList();
@@ -25,7 +26,11 @@ function AllPost() {
         {data &&
           data.documents
             .filter((blog) => blog.isPublished)
-            .map((blog) => <Card blog={blog} key={blog?.$id} />)}
+            .map((blog) => (
+              <Link key={blog?.$id} to={`/blog/${blog.$id}`}>
+                <Card blog={blog} />
+              </Link>
+            ))}
       </div>
     </main>
   );
