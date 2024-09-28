@@ -5,6 +5,7 @@ import { storageService } from '../../index';
 import { useLoginStore } from '../../zustStore/Store';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { LoaderCircleIcon } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 
 const AddPost = () => {
   const navigate = useNavigate();
@@ -122,6 +123,11 @@ const AddPost = () => {
     navigate('/all-post');
   };
 
+  const mutation = useMutation({
+    mutationFn: addPost,
+    mutationKey: ['add-post'],
+  });
+
   const clear = () => {
     reset();
   };
@@ -149,7 +155,7 @@ const AddPost = () => {
       {loading ? (
         <LoadingSkeleton />
       ) : (
-        <form onSubmit={handleSubmit(addPost)}>
+        <form onSubmit={handleSubmit(mutation.mutate)}>
           <div className="grid grid-cols-5 gap-8 w-full p-2">
             <div className="col-span-3 h-full">
               <div className="  w-full p-2 min-h-[80vh]">
@@ -177,7 +183,7 @@ const AddPost = () => {
                     required: true,
                   })}
                   disabled={true}
-                  className="italic bg-slate-50 font-semibold w-full pb-2 block pr-2 min-h-24"
+                  className="italic dark:bg-gray-900 bg-slate-50 font-semibold w-full pb-2 block pr-2 min-h-24"
                 ></textarea>
                 {errors && (
                   <p className="text-red-800">{errors?.slug?.message}</p>
@@ -188,13 +194,14 @@ const AddPost = () => {
                     required: true,
                     pattern: {
                       value: /^[A-Za-z]+[A-Za-z0-9\s]*$/,
-                      message:
-                        'statring must be with string and then number!!!',
+                      message: blog
+                        ? 'please change some title while updating'
+                        : ' statring must be with string and then number and while up!!!',
                     },
                   })}
                   type="text"
                   placeholder="title of blog "
-                  className="m-2 w-[80%] p-2 border border-purple-700 rounded-full -y-2 pl-6 hover:-purple-700"
+                  className="m-2 w-[80%] p-2 border dark:bg-gray-900 border-purple-700 rounded-full -y-2 pl-6 hover:-purple-700"
                   onInput={(e) => {
                     setValue('slug', slugTranform(e.currentTarget.value), {
                       shouldValidate: true,
@@ -217,7 +224,7 @@ const AddPost = () => {
                       },
                     })}
                     label="choose Profile"
-                    className={`block p-4 text-sm text-slate-500
+                    className={`block p-4 text-sm  text-slate-500
                                 file:mr-4 file:py-2 file:px-4
                                 file:rounded-full file:-0
                                 file:text-sm file:font-semibold
